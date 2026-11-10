@@ -1,0 +1,757 @@
+<title>Pickoo 官网 Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: fixed left index of flows, a wide stage that shows one 1920px design frame with click hotspots, and a link table under it. */
+:root{
+  --bg:#F5F4F8; --surface:#FFFFFF; --surface-2:#EFEDF4; --fg:#1B1726; --muted:#6E6880; --line:#E3DFEA;
+  --accent:#C918C9; --accent-ink:#8E0E8E; --accent-soft:#FBE4FB; --accent-line:#E55EE5;
+  --ok:#1D8F5B; --warn:#B9731B; --q:#E0520E; --q-soft:#FFF0E8; --mt:#D62839; --mt-soft:#FDEBED; --shadow:0 1px 2px rgba(27,23,38,.06),0 8px 24px rgba(27,23,38,.08);
+  --font-ui:"Manrope","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#141219; --surface:#1D1A25; --surface-2:#262231; --fg:#F2EEF6; --muted:#A79FB4; --line:#312C3D;
+  --accent:#F06AF0; --accent-ink:#F9A8F9; --accent-soft:#3A1E3A; --accent-line:#D94AD9;
+  --ok:#4CC38A; --warn:#E0A04A; --q:#FF8A4C; --q-soft:#3D2416; --mt:#FF6B7A; --mt-soft:#3F1C21; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#141219; --surface:#1D1A25; --surface-2:#262231; --fg:#F2EEF6; --muted:#A79FB4; --line:#312C3D;
+  --accent:#F06AF0; --accent-ink:#F9A8F9; --accent-soft:#3A1E3A; --accent-line:#D94AD9;
+  --ok:#4CC38A; --warn:#E0A04A; --q:#FF8A4C; --q-soft:#3D2416; --mt:#FF6B7A; --mt-soft:#3F1C21; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--font-ui);}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100%}
+/* ---------- sidebar ---------- */
+.side{background:var(--surface);border-right:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);height:calc(100dvh - env(safe-area-inset-top,0px));overflow:auto;padding-block:16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:12px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 14px}
+.brand .dot{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+.brand h1{font-size:15px;margin:0;line-height:1.2}
+.brand small{display:block;color:var(--muted);font-size:11px;font-weight:500}
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:3px;border-radius:10px;margin:0 8px 12px}
+.tabs button{flex:1;padding:6px 0;border-radius:8px;font-weight:600;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+.sec{margin:6px 0}
+.sec > button{width:100%;text-align:left;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;font-weight:700;font-size:13px}
+.sec > button:hover{background:var(--surface-2)}
+.sec .n{min-width:22px;height:22px;border-radius:6px;background:var(--surface-2);color:var(--muted);display:grid;place-items:center;font-size:11px;font-weight:700}
+.sec .caret{margin-left:auto;color:var(--muted);transition:transform .15s}
+.sec[data-open="false"] .caret{transform:rotate(-90deg)}
+.sec[data-open="false"] ul{display:none}
+.sec ul{list-style:none;margin:2px 0 4px;padding:0 0 0 10px;border-left:2px solid var(--line);margin-left:18px}
+.sec li button{width:100%;text-align:left;padding:5px 8px;border-radius:7px;color:var(--muted);font-weight:500;display:flex;gap:8px;align-items:baseline}
+.sec li button:hover{background:var(--surface-2);color:var(--fg)}
+.sec li button[aria-current="page"]{background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.tag{font-size:10px;padding:1px 6px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-weight:700;letter-spacing:.02em;margin-left:auto;white-space:nowrap}
+
+/* ---------- main ---------- */
+.main{min-width:0;padding-block:14px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-bottom:12px}
+.bar .crumbs{color:var(--muted);font-size:12px;font-weight:600}
+.bar h2{font-size:18px;margin:0;line-height:1.25;text-wrap:balance}
+.bar .grow{flex:1 1 200px;min-width:0}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:13px}
+.btn:hover{border-color:var(--accent-line)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:12px;margin:-4px 0 10px}
+.meta code{font-family:var(--font-mono);font-size:11px;background:var(--surface-2);padding:1px 6px;border-radius:5px}
+
+.stage-wrap{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:10px;}
+.stage{position:relative;margin:0 auto;max-width:100%;border-radius:8px;overflow:hidden;background:#fff;}
+.stage img{display:block;width:100%;height:auto;max-width:100%}
+.hot{position:absolute;border:2px dashed var(--accent-line);background:rgba(201,24,201,.07);border-radius:6px;cursor:pointer;transition:background .12s,border-color .12s;padding:0}
+.hot:hover,.hot:focus-visible{background:rgba(201,24,201,.18);border-style:solid}
+.hot.ext{border-color:var(--warn);background:rgba(185,115,27,.08)}
+.hot.note{border-color:var(--muted);background:rgba(110,104,128,.08)}
+/* modes: q = only question-related hotspots outlined (default); all = every hotspot; none = hover only */
+.stage[data-mode="all"] .hot{border-width:1.5px;background:rgba(201,24,201,.04)}
+.stage[data-mode="q"] .hot:not(.q),.stage[data-mode="none"] .hot{border-color:transparent;background:transparent}
+.stage[data-mode="q"] .hot:not(.q):hover,.stage[data-mode="none"] .hot:hover{border-color:var(--accent-line);background:rgba(201,24,201,.14)}
+.hot.q{border:2.5px solid var(--q);background:rgba(224,82,14,.10);box-shadow:0 0 0 3px rgba(224,82,14,.18)}
+.hot.q:hover{background:rgba(224,82,14,.2)}
+.stage[data-mode="none"] .hot.q{box-shadow:none}
+.stage[data-mode="none"] .hot.q .qb{display:none}
+.qb{position:absolute;left:-2px;top:-2px;transform:translateY(-100%);background:var(--q);color:#fff;font-size:11px;font-weight:800;padding:1px 6px;border-radius:5px 5px 5px 0;white-space:nowrap;line-height:1.5;z-index:4;font-family:var(--font-mono)}
+.hot.q.up .qb{transform:none;top:auto;bottom:-2px;transform:translateY(100%);border-radius:0 5px 5px 5px}
+.hot.q.right .qb{left:auto;right:-2px;border-radius:5px 5px 0 5px}
+.hot.q.up.right .qb{border-radius:5px 0 5px 5px}
+
+.hot.q.low .qb{top:auto;bottom:-2px;transform:translateY(100%);border-radius:0 5px 5px 5px}
+.hot.q.low.right .qb{border-radius:5px 0 5px 5px}
+
+/* slim per-page strip above the stage */
+.qstrip{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 10px;min-height:0}
+.qstrip:empty{display:none}
+.qstrip .lead{font-weight:800;color:var(--q);font-size:12px;margin-right:2px}
+.qstrip button{display:inline-flex;align-items:center;gap:6px;background:var(--q-soft);border:1px solid var(--q);color:var(--fg);border-radius:999px;padding:3px 10px 3px 4px;font-weight:600;font-size:12px;max-width:100%}
+.qstrip button .qmark{margin:0}
+.qstrip button:hover{background:var(--q);color:#fff}
+.qstrip .none{color:var(--muted);font-size:12px}
+
+/* question detail under the strip */
+.qdetail{background:var(--q-soft);border:1px solid var(--q);border-radius:10px;padding:10px 14px;margin:-4px 0 10px;display:grid;grid-template-columns:44px 1fr;gap:10px;font-size:13px}
+.qdetail .qn{font-family:var(--font-mono);font-weight:800;color:var(--q)}
+.qdetail .qt{font-weight:700}
+.qdetail .qt .area{color:var(--muted);font-weight:600;margin-right:6px}
+.qdetail .qo{color:var(--muted);font-size:12px;margin-top:2px}
+.qdetail .qs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.qdetail .qs button{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:700;color:var(--fg)}
+.qdetail .qs button:hover{border-color:var(--q);color:var(--q)}
+.qdetail .qs button[aria-current="page"]{background:var(--q);border-color:var(--q);color:#fff}
+.qstrip button[aria-expanded="true"]{background:var(--q);color:#fff}
+.qstrip button.mt{border-color:var(--mt);background:var(--mt-soft)}
+.qstrip button.mt[aria-expanded="true"]{background:var(--mt);color:#fff}
+.mtag{font-style:normal;font-size:10px;font-weight:800;background:var(--mt);color:#fff;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+.qstrip button[aria-expanded="true"] .mtag{background:#fff;color:var(--mt)}
+.qdetail.mt{border-color:var(--mt);background:var(--mt-soft)}
+.qdetail.mt .qn{color:var(--mt)}
+.qdetail .gap{margin:6px 0 2px;padding:8px 10px;background:var(--surface);border-radius:8px;color:var(--fg);font-size:12.5px;line-height:1.55}
+/* focus: only the hotspots of the question that was clicked */
+.stage .hot.q.focus,.stage[data-mode="none"] .hot.q.focus,.stage[data-mode="q"] .hot.q.focus{border:2.5px solid var(--mt);background:rgba(214,40,57,.10);box-shadow:0 0 0 3px rgba(214,40,57,.18);z-index:4}
+.stage .hot.q.focus:hover{background:rgba(214,40,57,.2)}
+.stage[data-focus]:not([data-focus=""]) .hot.q:not(.focus){border-color:transparent;background:transparent;box-shadow:none}
+.stage[data-focus]:not([data-focus=""]) .hot.q:not(.focus) .qb{display:none}
+.stage[data-mode="none"] .hot.q.focus .qb{display:inline;background:var(--mt)}
+.stage .hot.q.focus .qb{background:var(--mt)}
+
+/* comments */
+.chead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.chead h3{margin:0;display:flex;align-items:center;gap:8px}
+.ccnt{background:var(--accent);color:#fff;font-size:11px;padding:1px 8px;border-radius:999px;font-weight:800}
+.cactions{margin-left:auto;display:flex;gap:6px}
+.cform{display:grid;grid-template-columns:180px 1fr;gap:8px;margin:10px 0 12px}
+.cform input,.cform textarea{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 10px;width:100%;resize:vertical}
+.cform input:focus,.cform textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+.cform .crow{grid-column:1 / -1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cform .call{color:var(--muted);font-size:12px;display:inline-flex;align-items:center;gap:6px;margin-right:auto;white-space:nowrap}
+.cform .call input{margin:0;width:auto}
+.clist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.clist li{background:var(--surface-2);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:start}
+.clist .ch{grid-column:1;grid-row:1;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.clist .ch b{color:var(--fg);font-size:13px}
+.clist .ch .pg{color:var(--accent-ink);font-weight:600;cursor:pointer}
+.clist .ch .pg:hover{text-decoration:underline}
+.clist .cb{grid-column:1;grid-row:2;white-space:pre-wrap;font-size:13px}
+.clist .cx{grid-column:2;grid-row:1 / span 2;color:var(--muted);font-size:12px;padding:2px 6px;border-radius:6px}
+.clist .cx:hover{background:var(--surface);color:var(--fg)}
+.clist .empty{color:var(--muted);font-size:12px;background:none;padding:4px 0}
+@media (max-width:700px){.cform{grid-template-columns:1fr}}
+
+/* questions panel (legacy) */
+.qpanel{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--q);border-radius:14px;padding:12px 16px;margin-top:14px}
+@media (min-width:1100px){ .qlist{grid-template-columns:1fr 1fr} .qlist li.wide{grid-column:1 / -1} }
+.qpanel summary{cursor:pointer;font-weight:800;font-size:14px;display:flex;align-items:center;gap:10px;list-style:none}
+.qpanel summary::-webkit-details-marker{display:none}
+.qpanel summary .cnt{background:var(--q);color:#fff;font-size:11px;padding:1px 8px;border-radius:999px;font-weight:800}
+.qpanel summary .hint{color:var(--muted);font-weight:500;font-size:12px;margin-left:auto}
+.qlist{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.qlist li{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.qlist li.here{background:var(--q-soft);outline:1.5px solid var(--q)}
+.qlist .qn{font-family:var(--font-mono);font-weight:800;color:var(--q);font-size:13px;padding-top:2px}
+.qlist .qt{font-weight:700;font-size:13px}
+.qlist .qt .area{color:var(--muted);font-weight:600;margin-right:6px}
+.qlist .qo{color:var(--muted);font-size:12px;margin-top:2px}
+.qlist .qs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.qlist .qs button{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:700;color:var(--fg)}
+.qlist .qs button:hover{border-color:var(--q);color:var(--q)}
+.qlist .qs button[aria-current="page"]{background:var(--q);border-color:var(--q);color:#fff}
+.qmark{display:inline-block;font-family:var(--font-mono);font-size:10px;font-weight:800;color:#fff;background:var(--q);padding:0 5px;border-radius:4px;margin-right:4px;vertical-align:middle}
+.hot .lbl{position:absolute;left:0;top:100%;margin-top:4px;background:var(--fg);color:var(--bg);font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(-2px);transition:opacity .12s;z-index:5;max-width:min(360px,80vw);white-space:normal;line-height:1.3}
+.hot:hover .lbl,.hot:focus-visible .lbl{opacity:1}
+.hot.up .lbl{top:auto;bottom:100%;margin:0 0 4px}
+.hot.right .lbl{left:auto;right:0}
+.stage.flash .hot{animation:pulse .9s ease-out 1}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(201,24,201,.45)}100%{box-shadow:0 0 0 14px rgba(201,24,201,0)}}
+@media (prefers-reduced-motion:reduce){.stage.flash .hot{animation:none}}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;opacity:0;transition:.18s;z-index:50;max-width:min(520px,90vw);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.panel{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.panel h3{margin:0 0 8px;font-size:14px}
+.panel p.desc{margin:0 0 10px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:700;font-size:12px;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tr.link{cursor:pointer}
+tr.link:hover td{background:var(--surface-2)}
+.to{display:inline-flex;align-items:center;gap:6px;color:var(--accent-ink);font-weight:700}
+.to.ext{color:var(--warn)}
+.to.note{color:var(--muted);font-weight:500}
+.kbd{font-family:var(--font-mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--muted)}
+
+/* ---------- overview ---------- */
+.ov h2{font-size:20px;margin:6px 0 2px}
+.ov .lead{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.ov-sec{margin:0 0 26px}
+.ov-sec h3{font-size:15px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+.ov-sec .sub{color:var(--muted);font-size:12px;margin:0 0 10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.card .thumb{aspect-ratio:16/9;background:var(--surface-2);overflow:hidden;cursor:pointer;position:relative}
+.card .thumb img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;max-width:100%}
+.card .thumb .idx{position:absolute;left:8px;top:8px;background:var(--fg);color:var(--bg);font-size:11px;font-weight:800;padding:2px 7px;border-radius:999px}
+.card .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px}
+.card .name{font-weight:700;font-size:13px;line-height:1.3;cursor:pointer}
+.card .name:hover{color:var(--accent-ink)}
+.card .outs{display:flex;flex-wrap:wrap;gap:4px}
+.card .outs button{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.card .outs button:hover{background:var(--accent);color:#fff}
+.card .outs .ext{background:var(--surface-2);color:var(--warn)}
+.card .outs .none{background:var(--surface-2);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:12px;margin:0 0 16px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:4px;border:2px dashed var(--accent-line);background:rgba(201,24,201,.1)}
+.sw.ext{border-color:var(--warn);background:rgba(185,115,27,.1)}
+.sw.note{border-color:var(--muted);background:rgba(110,104,128,.1)}
+
+.about{max-width:72ch}
+.about h2{font-size:20px;margin:6px 0 10px}
+.about h3{font-size:15px;margin:18px 0 6px}
+.about li{margin:4px 0}
+.about p{margin:6px 0}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .sec[data-open="true"] ul{display:none}
+  .sec[data-force="true"] ul{display:block}
+  .main{padding-block:12px 40px}
+}
+</style>
+
+<div class="app">
+  <nav class="side" aria-label="页面索引">
+    <div class="brand"><div class="dot">P</div><h1>Pickoo 官网 Demo<small>Okiee 官网 · 11.2 定稿 · 可点击原型</small></h1></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-demo" aria-selected="true">演示</button>
+      <button role="tab" id="tab-ov" aria-selected="false">流程总览</button>
+      <button role="tab" id="tab-about" aria-selected="false">说明</button>
+    </div>
+    <div id="tree"></div>
+  </nav>
+
+  <main class="main">
+    <section id="view-demo">
+      <div class="bar">
+        <div class="grow"><div class="crumbs" id="crumbs"></div><h2 id="title"></h2></div>
+        <button class="btn" id="back" title="返回上一个页面 (←)">← 返回</button>
+        <button class="btn" id="toggle" aria-pressed="false" title="切换热区显示：隐藏 / 只看待确认 / 全部热区">热区已隐藏</button>
+      </div>
+      <div class="meta" id="meta"></div>
+      <div class="qstrip" id="qstrip"></div>
+      <div class="qdetail" id="qdetail" hidden></div>
+      <div class="stage-wrap"><div class="stage" id="stage" data-mode="none"><img id="shot" alt=""></div></div>
+      <div class="panel cpanel" id="cpanel">
+        <div class="chead"><h3>评论 <span class="ccnt" id="ccnt">0</span></h3><div class="cactions"><button class="btn" id="ccopy" type="button">复制全部评论</button><button class="btn" id="cdl" type="button">下载 .md</button></div></div>
+        <p class="desc">评论保存在你这台浏览器里，不会自动同步给别人。写完后点「复制全部评论」粘到群里或文档即可汇总。</p>
+        <form id="cform" class="cform">
+          <input id="cname" placeholder="你的名字" maxlength="20" autocomplete="name">
+          <textarea id="ctext" rows="2" placeholder="对这个页面的意见…（可带问题编号，如 Q6：…）" required></textarea>
+          <div class="crow"><label class="call"><input type="checkbox" id="call"> 显示所有页面的评论</label><button class="btn primary" type="submit">添加评论</button></div>
+        </form>
+        <ul class="clist" id="clist"></ul>
+      </div>
+      <div class="panel">
+        <h3>本页可点击元素 → 去向</h3>
+        <p class="desc" id="desc"></p>
+        <table><thead><tr><th style="width:38%">点击</th><th style="width:34%">去到</th><th>说明</th></tr></thead><tbody id="links"></tbody></table>
+      </div>
+    </section>
+
+    <section id="view-ov" class="ov" hidden>
+      <h2>流程总览</h2>
+      <p class="lead">按 Figma 页面里的分区整理。每张卡片是一个页面状态，卡片下的紫色标签是这个页面上点击后能去到的页面，点标签直接跳过去演示。</p>
+      <div class="legend"><span><i class="sw"></i>页面内跳转</span><span><i class="sw ext"></i>外链 / 跳出站外</span><span><i class="sw note"></i>仅状态说明，不跳转</span></div>
+      <div id="ov"></div>
+    </section>
+
+    <section id="view-about" class="about" hidden>
+      <h2>这份 Demo 怎么用</h2>
+      <p>目的：让产品和研发在评审时一眼知道「点了这里会去哪个页面」。页面图取自设计稿 <b>Okiee 官网 · 11.2 定稿</b>，热区和跳转关系是按设计稿里的 frame 命名（弹窗 / 点击唤起chat / 展开全屏 / 跳转到chat…）和分区标题整理出来的。</p>
+      <h3>操作</h3>
+      <ul>
+        <li>页面图上方一行「本页待确认」列出这个页面涉及的评审问题（Q1–Q11），点一下展开全文、责任人和相关页面，同时在图上用红框高亮这条问题涉及的位置。带「开会明确」标签的是交互稿里找不到答案、需要会上定的。</li>
+        <li>页面图默认不画框，鼠标悬停任意可点位置会显示去向。右上角按钮可切到「只看待确认」（橙色框标出和问题相关的位置）或「全部热区」（紫色虚线）。</li>
+        <li>图下方是评论区：写名字和意见，按页面保存在你自己的浏览器里。看完后点「复制全部评论」或「下载 .md」，把汇总发到群里。</li>
+        <li>黄色框是外链（Chrome 商店、商家站 Buy Now），灰色框是只做状态说明的元素（置灰按钮、toast 等），点了不会跳页。</li>
+        <li><span class="kbd">←</span> 或「返回」回到上一个页面；<span class="kbd">Esc</span> 回首页。每个页面都有独立链接（地址栏 #），可以直接发给别人定位到某个状态。</li>
+        <li>「流程总览」把每个分区的页面按顺序摆开，用来对整条链路。</li>
+      </ul>
+      <h3>覆盖范围与假设</h3>
+      <ul>
+        <li>共 55 张页面图，覆盖 Figma 该页全部桌面端 frame（1920 宽）；两张 393×853 的 Migoo 移动端卡片是参考图，未收录。</li>
+        <li>「已登录首页」是用顶栏组件（头像态）与默认首页合成的，Figma 里没有单独这一帧。</li>
+        <li>设计稿没有连线的跳转（比如商品卡 → PDP、心形 → Favorites、Adjust with Okiee → 对话内编辑），按分区标题和同类产品惯例推断，标注里写了「推断」，评审时重点确认这些。</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const SIZES = {"home":[1920,1080],"home-long":[1920,5513],"home-chat":[1920,1080],"home-full":[1920,1080],"login":[1920,1080],"me-menu":[1920,1080],"feedback":[1920,1080],"hdr-guest":[1920,80],"hdr-letter":[1920,80],"hdr-avatar":[1920,80],"cp-popup":[1920,1080],"cp-popup-link":[1920,1080],"cp-popup-error":[1920,1080],"cp-popup-photo":[1920,1080],"cp-popup-picked":[1920,1080],"cp-chat":[1920,1080],"cp-full":[1920,1080],"pdp-panel":[1920,1080],"pdp-full":[1920,1080],"pdp-more":[1920,3061],"pdp-side-lowest":[520,3351],"pdp-side-compare":[520,3343],"tp-popup":[1920,1080],"tp-chat":[1920,1080],"tp-chat-form":[1920,1080],"tp-set-ok":[1920,1080],"tp-full":[1920,1080],"bd-popup":[1920,1080],"bd-popup-sel":[1920,1080],"bd-chat":[1920,1080],"bd-full":[1920,1080],"bd-comp":[1040,790],"id-popup":[1920,1080],"id-popup-sel":[1920,1080],"id-chat":[1920,1080],"id-full":[1920,1080],"autotask":[1920,1080],"at-add-menu":[1920,1080],"at-add":[1920,1080],"at-added":[1920,1080],"at-del-menu":[1920,1080],"at-del-confirm":[1920,1080],"at-main-agent":[1920,1080],"at-prompt":[1920,1080],"at-chat":[1920,1080],"at-chat-form":[1920,1080],"at-edit":[1920,1080],"at-updated":[1920,1080],"result-opt1":[1920,1080],"result-opt2":[1920,1080],"result-big":[1920,1080],"agent-comp":[680,1412],"favorites":[1920,1080],"fav-panel":[1920,1080],"home-logged":[1920,1080]};
+
+// ---- hotspot helpers (coordinates are px on the 1920-wide frame) ----
+const H = (x,y,w,h,label,to,opt={}) => Object.assign({x,y,w,h,label,to},opt);
+const EXT = (x,y,w,h,label,note) => H(x,y,w,h,label,null,{ext:true,note});
+const NOTE = (x,y,w,h,label,note) => H(x,y,w,h,label,null,{note});
+const hdr = (logged) => [
+  H(16,16,110,48,'Logo → 首页','home'),
+  H(766,20,88,42,'Explore → 首页','home'),
+  H(868,20,62,42,'Chat → 首页并唤起 Agent 侧栏','home-chat'),
+  H(944,20,100,42,'Auto-task → 任务列表','autotask'),
+  H(1058,20,96,42,'Favorites → 收藏列表','favorites'),
+  EXT(1564,16,232,48,'Add Okiee to Chrome','跳 Chrome 应用商店安装插件（站外）'),
+  logged ? H(1866,12,52,56,'头像 → Me page 浮窗','me-menu') : H(1803,16,100,48,'Log in → 登录弹窗','login'),
+];
+const navAuto = () => hdr(false);
+// chat side panel chrome (expand / close / input)
+const panel = (fullTo, closeTo, inputTo, inputLabel) => [
+  H(1806,96,38,38,'⤢ 展开 → chat 全屏',fullTo),
+  H(1846,96,38,38,'✕ 关闭侧栏',closeTo),
+  inputTo ? H(1284,936,590,98,inputLabel||'发送追问 → 下一轮回复',inputTo) : NOTE(1284,936,590,98,'追问输入框','发送后在侧栏内继续对话，不换页'),
+];
+const fullChrome = (collapseTo, closeTo) => [
+  H(1810,94,38,38,'⤡ 收起 → 回到侧栏',collapseTo),
+  H(1850,94,38,38,'✕ 关闭全屏',closeTo),
+];
+// popup chrome for the 4 二级页 dialogs (same geometry)
+const popupClose = (to='home') => H(1424,164,40,40,'✕ 关闭弹窗 → 回首页',to);
+const homeCards = () => [
+  H(209,440,356,236,'Compare Prices 卡片 → 比价弹窗','cp-popup'),
+  H(593,440,352,236,'Track Price Drops 卡片 → 盯价弹窗','tp-popup'),
+  H(973,440,354,236,'Shop Within Budget 卡片 → 预算购物弹窗','bd-popup'),
+  H(1352,440,356,236,'Find Shopping Ideas 卡片 → 送礼灵感弹窗','id-popup'),
+];
+const homeChips = (to) => [
+  H(320,278,405,44,'推荐问题 chip → 带着问题唤起 Agent',to),
+  H(747,278,422,44,'推荐问题 chip',to),
+  H(1186,278,410,44,'推荐问题 chip',to),
+  H(601,342,344,44,'推荐问题 chip',to),
+  H(966,342,357,44,'推荐问题 chip',to),
+];
+const topDeals = (to) => [
+  H(79,851,284,229,'Top deals 商品卡 → 商品详情（推断）',to),
+  H(384,851,284,229,'商品卡 → 商品详情',to),
+  H(687,851,284,229,'商品卡 → 商品详情',to),
+  H(992,851,284,229,'商品卡 → 商品详情',to),
+];
+
+const SECTIONS = [
+ {key:'s1', name:'首页与登录', figmaBar:'首页 / 未登录和登录状态 / 登录弹窗 / Mepage 浮窗', screens:[
+  {key:'home', node:'707-21918', fname:'默认底部输入框', name:'首页 · 默认态（底部 Ask Okiee 输入框）',
+   desc:'未登录首页首屏。四个能力卡片进二级弹窗；底部悬浮输入框、推荐问题 chip 都会唤起右侧 Okiee Agent 侧栏。',
+   hot:[...hdr(false), ...homeChips('home-chat'), ...homeCards(), H(561,951,798,108,'Ask Okiee 输入框 → 唤起 Agent 侧栏','home-chat'), ...topDeals('pdp-panel'), H(1295,851,284,229,'商品卡 → 商品详情','pdp-panel'), H(1600,851,284,229,'商品卡 → 商品详情','pdp-panel')]},
+  {key:'home-long', node:'707-21919', fname:'okiee官网首页', name:'首页 · 完整长页（向下滚动）',
+   desc:'整页内容：Top deals、Shop the Whole List、Carry On、Big Savings 优惠券、Deals for You 筛选流。商品卡、Claim Now 的去向按惯例推断。',
+   hot:[...hdr(false), ...homeChips('home-chat'), ...homeCards(), ...topDeals('pdp-panel'), H(1295,851,284,229,'商品卡 → 商品详情','pdp-panel'), H(1600,851,284,229,'商品卡 → 商品详情','pdp-panel'),
+     H(79,1490,420,500,'Shop the Whole List 清单卡 → 进 Agent 对话（携带信息待补）','home-chat'), H(524,1490,420,500,'合集卡','home-chat'), H(970,1490,420,500,'合集卡','home-chat'), H(1415,1490,420,500,'合集卡','home-chat'),
+     H(110,2240,1660,460,'Carry On 横滑商品卡 → 商品详情','pdp-panel'),
+     EXT(79,2840,1760,180,'Big Savings · Claim Now','领券跳商家站（站外，推断）'),
+     H(79,3180,1760,2300,'Deals for You 商品流卡片 → 商品详情','pdp-panel'), NOTE(79,3100,1760,60,'Deals for You 筛选 chip','切换排序 / 品类，当前页刷新')]},
+  {key:'home-chat', node:'707-28288', fname:'点击唤起chat', name:'首页 · 唤起 Okiee Agent 侧栏',
+   desc:'输入框 / chip / Chat 导航触发。右侧 640 宽侧栏，顶部有「展开全屏」和「关闭」；结果里的商品卡点开商品详情侧栏。',
+   hot:[...hdr(false), ...panel('home-full','home',null), H(1290,311,577,450,'结果商品卡 → 商品详情侧栏（推断）','pdp-panel'), ...homeCards()]},
+  {key:'home-full', node:'707-27778', fname:'展开全屏', name:'首页 · Agent 全屏态',
+   desc:'侧栏点「展开」后铺满内容区，顶栏保留。收起回侧栏，关闭回首页。',
+   hot:[...hdr(false), ...fullChrome('home-chat','home'), H(320,354,1280,395,'结果商品卡 → 全屏商品详情','pdp-full'), NOTE(561,951,798,108,'追问输入框','全屏内继续对话')]},
+  {key:'login', node:'717-30990', fname:'登录弹窗', name:'登录弹窗（Google 登录）',
+   desc:'未登录点 Log in、或触发需要登录的动作（收藏、建任务）时弹出。只有 Google 一种方式，与插件登录承接一致。',
+   hot:[H(753,600,416,52,'Continue with Google → 登录成功回到首页（头像态）','home-logged'), H(1153,349,38,38,'✕ 关闭 → 回首页','home'), NOTE(1264,880,400,40,'Terms / Privacy','打开协议页（站外）'), H(0,0,1920,1080,'点遮罩 → 关闭弹窗','home',{under:true})]},
+  {key:'home-logged', node:'717-30953', fname:'合成：首页 + 顶栏头像态', name:'首页 · 已登录（顶栏显示头像）',
+   desc:'登录后 Log in 按钮换成头像。此图由默认首页与顶栏组件「Frame 2147227686」合成，Figma 无单独帧。',
+   hot:[...hdr(true), ...homeChips('home-chat'), ...homeCards(), H(561,951,798,108,'Ask Okiee 输入框 → 唤起 Agent 侧栏','home-chat'), ...topDeals('pdp-panel')]},
+  {key:'me-menu', node:'1519-66944', fname:'Home（Mepage 浮窗）', name:'Me page 浮窗（点头像）',
+   desc:'头像 hover / 点击展开。Web Permissions、Language 为设置项（与插件一致），Feedback & Support 打开反馈弹窗，Logout 回未登录首页。',
+   hot:[H(1500,98,399,470,'浮窗区域','me-menu',{note:'浮窗本体'}), H(1510,226,380,60,'Web Permissions → 权限设置（设计稿未给，待补）',null,{note:'二级设置页未出图'}), H(1510,290,380,60,'Language → 语言设置（待补）',null,{note:'二级设置页未出图'}), H(1510,354,380,60,'Feedback & Support → 反馈弹窗','feedback'), H(1510,418,380,60,'Logout → 退出，回未登录首页','home'), H(0,0,1480,1080,'点浮窗外 → 收起','home-logged',{under:true})]},
+  {key:'feedback', node:'1519-68628', fname:'Feedback & Support', name:'Feedback & Support 弹窗',
+   desc:'从 Me page 浮窗进入（设计稿背景是 Auto-task 页，说明任何页面都可以弹）。Submit 置灰直到填了内容。',
+   hot:[H(1204,300,38,38,'✕ 关闭 → 回到原页面','autotask'), NOTE(686,400,550,230,'反馈文本框','必填，0/5000'), NOTE(686,740,86,96,'Add 附件','可附截图'), NOTE(1130,860,110,44,'Submit','有内容后高亮，提交后关闭弹窗并 toast')]},
+  {key:'hdr-guest', node:'717-30838', fname:'Frame 2147227684', name:'顶栏组件 · 未登录', tag:'组件', desc:'全站顶栏三态之一：未登录显示 Log in。', hot:hdr(false)},
+  {key:'hdr-letter', node:'717-30904', fname:'Frame 2147227685', name:'顶栏组件 · 已登录（字母头像）', tag:'组件', desc:'没有 Google 头像时用首字母占位。', hot:hdr(true)},
+  {key:'hdr-avatar', node:'717-30953', fname:'Frame 2147227686', name:'顶栏组件 · 已登录（图片头像）', tag:'组件', desc:'有 Google 头像。', hot:hdr(true)},
+ ]},
+ {key:'s2', name:'二级页 1 · Compare Prices', figmaBar:'二级页 / 1. Compare Prices', screens:[
+  {key:'cp-popup', node:'1139-116162', fname:'弹窗', name:'Compare Prices 弹窗 · 空态',
+   desc:'首页卡片点开。三种输入：粘贴商品链接、拖图 / browse 上传、或从最近浏览里挑一个。',
+   hot:[...hdr(false), popupClose(), H(907,275,544,52,'输入框：粘贴商品链接 → 已填链接态','cp-popup-link'), H(1088,378,192,30,'Drop a photo / browse → 已传图态','cp-popup-photo'), H(907,486,548,424,'最近浏览商品 → 选中态','cp-popup-picked'), H(0,0,1920,1080,'点遮罩 → 关闭','home',{under:true})]},
+  {key:'cp-popup-link', node:'1139-117368', fname:'弹窗', name:'Compare Prices 弹窗 · 已填链接',
+   desc:'填入商品页链接后发送箭头点亮。',
+   hot:[...hdr(false), H(1424,144,40,40,'✕ 关闭','home'), H(1395,258,46,46,'发送 → 进 Agent 对话出比价结果','cp-chat'), H(939,256,440,50,'换成店铺首页链接 → 报错态','cp-popup-error'), H(907,486,548,424,'最近浏览商品 → 选中态','cp-popup-picked')]},
+  {key:'cp-popup-error', node:'1139-118673', fname:'弹窗', name:'Compare Prices 弹窗 · 链接报错',
+   desc:'粘的是店铺首页而不是商品页：输入框描红，提示 “This is a store homepage. Paste a product-page link.”',
+   hot:[...hdr(false), H(1424,144,40,40,'✕ 关闭','home'), H(939,256,490,52,'改成商品页链接 → 已填链接态','cp-popup-link'), H(907,486,548,424,'改选最近浏览商品','cp-popup-picked')]},
+  {key:'cp-popup-photo', node:'1139-119089', fname:'弹窗', name:'Compare Prices 弹窗 · 已上传图片',
+   desc:'拖入 / 选择图片后在右侧出现缩略图，可删除；发送箭头点亮。',
+   hot:[...hdr(false), popupClose(), H(1395,280,46,44,'发送 → 进 Agent 对话出比价结果','cp-chat'), NOTE(1640,340,60,50,'缩略图 ✕','删掉图片回空态'), H(907,486,548,424,'最近浏览商品','cp-popup-picked')]},
+  {key:'cp-popup-picked', node:'1139-117101', fname:'弹窗', name:'Compare Prices 弹窗 · 选中最近浏览',
+   desc:'点最近浏览里的商品：卡片描边高亮，输入框自动填该商品链接。',
+   hot:[...hdr(false), H(1424,144,40,40,'✕ 关闭','home'), H(1395,280,46,44,'发送 → 进 Agent 对话出比价结果','cp-chat'), H(907,493,123,202,'再点一次 → 取消选中','cp-popup')]},
+  {key:'cp-chat', node:'1150-158573', fname:'跳转到chat', name:'Compare Prices · Agent 侧栏出结果',
+   desc:'弹窗关闭，右侧 Agent 侧栏带着商品卡 + 问题进对话，回复各店价格列表。',
+   hot:[...hdr(false), ...panel('cp-full','home',null), H(1280,386,597,534,'店铺 / 商品行 → 商品详情侧栏','pdp-panel'), NOTE(1540,210,330,60,'带入的商品 chip','对话上下文')]},
+  {key:'cp-full', node:'1150-158674', fname:'全屏chat', name:'Compare Prices · 全屏态（比价表格）',
+   desc:'全屏下结果用表格呈现（Store / Price / Coupon / Shipping / Total），Okiee\'s pick 推荐 + 相似商品卡。',
+   hot:[...hdr(false), ...fullChrome('cp-chat','home'), H(320,397,1280,234,'比价表格行 → 商家站（推断外链）',null,{ext:true,note:'跳对应商家购买页'}), H(320,727,1280,250,'相似商品卡 → 全屏商品详情','pdp-full'), NOTE(561,951,798,108,'追问输入框','全屏内继续对话')]},
+ ]},
+ {key:'s3', name:'二级页 2 · Track Price Drops', figmaBar:'二级页 / 2. Track Price Drops', screens:[
+  {key:'tp-popup', node:'1139-116423', fname:'弹窗', name:'Track Price Drops 弹窗',
+   desc:'与比价弹窗同构：贴链接 / 传图 / 选最近浏览。',
+   hot:[...hdr(false), popupClose(), H(939,275,502,52,'输入商品链接并发送 → Agent 直接建提醒','tp-chat'), H(1088,378,192,30,'Drop a photo / browse','tp-chat'), H(907,486,548,424,'选最近浏览商品 → Agent 出设价表单','tp-chat-form'), H(0,0,1920,1080,'点遮罩 → 关闭','home',{under:true})]},
+  {key:'tp-chat', node:'1218-199444', fname:'点击唤起chat', name:'Track Price Drops · Agent 已创建提醒',
+   desc:'用户用自然语言给了目标价（“drops below $42”），Agent 直接建好提醒并提示可在 Auto-task 里改。',
+   hot:[...hdr(false), ...panel('tp-full','home','tp-chat-form','追问 → Agent 出设价表单'), H(1280,354,597,555,'商品行 → 商品详情侧栏','pdp-panel'), H(944,20,100,42,'Auto-task → 去任务列表查看','autotask')]},
+  {key:'tp-chat-form', node:'1139-145197', fname:'点击唤起chat', name:'Track Price Drops · 对话内设价表单',
+   desc:'没说目标价时 Agent 在对话里给表单：期望价输入、-5%/-10%/-15%/-20% 快捷、Set Price Tracker。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), H(1312,471,544,86,'商品卡 › → 商品详情侧栏','pdp-panel'), NOTE(1312,747,544,30,'Quick input 快捷折扣','填充期望价'), H(1675,800,181,36,'Set Price Tracker → 设置成功','tp-set-ok')]},
+  {key:'tp-set-ok', node:'1218-256214', fname:'点击唤起chat', name:'Track Price Drops · Set successfully',
+   desc:'表单提交后回显 “Set a drop price … below $300” 和 “Set successfully!”，任务同步进 Auto-task。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), H(944,20,100,42,'Auto-task → 任务列表里能看到新任务','autotask'), NOTE(1300,236,560,420,'已提交的表单','变为只读回显')]},
+  {key:'tp-full', node:'1139-120122', fname:'展开全屏', name:'Track Price Drops · 全屏态',
+   desc:'全屏 chat，仅文字回复。',
+   hot:[...hdr(false), ...fullChrome('tp-chat','home'), NOTE(559,951,798,108,'追问输入框','全屏内继续对话')]},
+ ]},
+ {key:'s4', name:'二级页 3 · Shop Within Budget', figmaBar:'二级页 / 3. Shop Within Budget', screens:[
+  {key:'bd-popup', node:'1139-116722', fname:'弹窗', name:'Shop Within Budget 弹窗 · 空态',
+   desc:'先选要买什么（搜索框或 6 个品类），再填预算；没选品类前 Find picks 置灰。',
+   hot:[...hdr(false), popupClose(), H(928,288,502,36,'搜索框输入品类 → 已选态','bd-popup-sel'), H(917,354,524,108,'品类 chip（Pets / Travel / …）→ 已选态','bd-popup-sel'), NOTE(917,555,512,36,'预算输入框','默认 $100'), NOTE(917,612,512,32,'$25–$500 快捷预算','填充预算'), NOTE(1323,860,118,38,'Find picks（置灰）','未选品类时不可点'), H(0,0,1920,1080,'点遮罩 → 关闭','home',{under:true})]},
+  {key:'bd-popup-sel', node:'1139-117778', fname:'弹窗', name:'Shop Within Budget 弹窗 · 已选 Travel / $100',
+   desc:'选了品类、预算后 Find picks 高亮。',
+   hot:[...hdr(false), H(1424,144,40,40,'✕ 关闭','home'), H(907,354,535,108,'换品类','bd-popup-sel'), H(1323,860,120,38,'Find picks → Agent 出预算内选品','bd-chat'), NOTE(917,555,512,36,'预算输入框','可改')]},
+  {key:'bd-chat', node:'1139-119533', fname:'点击唤起chat', name:'Shop Within Budget · Agent 出选品',
+   desc:'回复 “Found 8 Travel & bags picks under $100”，两列商品卡带「$xx under budget」角标、心形收藏、… 更多。',
+   hot:[...hdr(false), ...panel('bd-full','home',null), H(1290,386,577,416,'选品卡 → 商品详情侧栏','pdp-panel'), H(1630,396,40,36,'♡ 收藏 → 加入 Favorites（未登录会先弹登录）','favorites'), NOTE(1536,396,40,36,'… 更多','卡片操作菜单，未出图')]},
+  {key:'bd-full', node:'1139-119994', fname:'展开全屏', name:'Shop Within Budget · 全屏态',
+   desc:'全屏下 4 列商品卡。',
+   hot:[...hdr(false), ...fullChrome('bd-chat','home'), H(320,386,1280,470,'选品卡 → 全屏商品详情','pdp-full'), NOTE(561,951,798,108,'追问输入框','全屏内继续对话')]},
+  {key:'bd-comp', node:'1691-102035', fname:'非聚焦', name:'预算弹窗组件 · 非聚焦态', tag:'组件',
+   desc:'弹窗组件单独出的非聚焦状态（预算输入 $150、Find picks 置灰），供研发对样式。',
+   hot:[NOTE(380,1120,520,110,'Anything to consider? 输入框（非聚焦）','可选备注'), NOTE(760,1180,110,50,'Find picks 置灰','未满足条件')]},
+ ]},
+ {key:'s5', name:'二级页 4 · Find Shopping Ideas', figmaBar:'二级页 / 4. Find shopping ideas', screens:[
+  {key:'id-popup', node:'1139-116940', fname:'弹窗', name:'Find Shopping Ideas 弹窗 · 空态',
+   desc:'送礼灵感：选对象（Her / Him / Kids / Pets / Home / Travel）+ 场合（Birthday …），Get ideas 置灰直到选齐。',
+   hot:[...hdr(false), popupClose(), H(917,354,524,108,'对象 chip → 已选态','id-popup-sel'), H(907,550,522,80,'场合 chip → 已选态','id-popup-sel'), NOTE(1323,860,118,38,'Get ideas（置灰）','未选齐不可点'), NOTE(917,935,512,60,'Tell Okiee more（可选）','补充偏好'), H(0,0,1920,1080,'点遮罩 → 关闭','home',{under:true})]},
+  {key:'id-popup-sel', node:'1139-117969', fname:'弹窗', name:'Find Shopping Ideas 弹窗 · 已选 Him / Birthday',
+   desc:'选齐后 Get ideas 高亮。',
+   hot:[...hdr(false), H(1424,144,40,40,'✕ 关闭','home'), H(907,354,535,108,'换对象','id-popup-sel'), H(1323,860,120,38,'Get ideas → Agent 出灵感清单','id-chat')]},
+  {key:'id-chat', node:'1139-119629', fname:'点击唤起chat', name:'Find Shopping Ideas · Agent 出灵感',
+   desc:'“Here are 8 ideas for her for a birthday”，卡片带 Top idea / Crowd favorite 标签。',
+   hot:[...hdr(false), ...panel('id-full','home',null), H(1290,386,577,416,'灵感商品卡 → 商品详情侧栏','pdp-panel'), H(1630,396,40,36,'♡ 收藏 → Favorites','favorites')]},
+  {key:'id-full', node:'1139-120058', fname:'展开全屏', name:'Find Shopping Ideas · 全屏态',
+   desc:'全屏 4 列卡片。',
+   hot:[...hdr(false), ...fullChrome('id-chat','home'), H(320,386,1280,470,'灵感商品卡 → 全屏商品详情','pdp-full'), NOTE(561,951,798,108,'追问输入框','全屏内继续对话')]},
+ ]},
+ {key:'s6', name:'PDP 商品详情', figmaBar:'PDP', screens:[
+  {key:'pdp-panel', node:'1218-203738', fname:'点击商品跳转到pdp', name:'商品详情 · 右侧侧栏',
+   desc:'在首页 / Agent 结果里点商品卡，右侧滑出 PDP 侧栏：价格、多平台价格条（Lowest of 3 stores）、要点。',
+   hot:[...hdr(false), H(1836,108,38,38,'✕ 关闭侧栏 → 回原页面','home'), H(1440,620,440,120,'价格 / 标题区 → 全屏 PDP（推断）','pdp-full'), H(1451,791,426,96,'平台价格条 → 全屏 PDP 的 Available at','pdp-full'), H(1440,170,440,440,'商品大图 → 全屏 PDP','pdp-full')]},
+  {key:'pdp-full', node:'1218-266596', fname:'全屏PDP / 首屏 / 左图固定·右侧滚动', name:'商品详情 · 全屏首屏',
+   desc:'左图固定右侧滚动。Overview / Reviews & details 两个 tab；Buy at Walmart 外跳；Track price / Is this a good price? / Compare with another 三个 Agent 快捷入口；Available at 列各平台价格。',
+   hot:[...hdr(false), H(314,92,80,38,'Overview tab（当前）','pdp-full'), H(430,92,120,38,'Reviews & details tab → 下滑到评价区','pdp-more'), H(1760,96,36,36,'♡ 收藏 → Favorites','favorites'), H(1800,96,36,36,'⤡ 收起 → 回侧栏态','pdp-panel'), H(1840,96,38,36,'✕ 关闭 → 回首页','home'),
+     EXT(1130,578,382,46,'Buy at Walmart · $29 ↗','跳 Walmart 商品页（站外）'), H(1528,560,70,70,'Ask Okiee → 带商品唤起 Agent 侧栏','cp-chat'),
+     H(1040,644,104,32,'Track price → 对话内设价表单','tp-chat-form'), H(1156,644,150,32,'Is this a good price? → Agent 比价回复','cp-chat'), H(1318,644,172,32,'Compare with another → 比价弹窗','cp-popup'),
+     EXT(1520,740,76,40,'Buy（Walmart）','跳商家站'), EXT(1520,812,76,40,'Buy（Amazon）','跳商家站'), EXT(1520,884,76,40,'Buy（Ebay）','跳商家站'), NOTE(1260,952,150,40,'Show More','展开更多平台'),
+     NOTE(312,150,84,330,'缩略图列','切换主图')]},
+  {key:'pdp-more', node:'1300-56021', fname:'全屏PDP / 更多内容 / 同页下滑状态', name:'商品详情 · 全屏下滑（Reviews & details）',
+   desc:'同一页向下滚：价格走势（Lowest in 30 days）、What People are Saying、Details 参数、详情图。',
+   hot:[...hdr(false), H(320,94,72,36,'Overview tab → 回到顶部','pdp-full'), H(436,94,110,36,'Reviews & details（当前）','pdp-more'), H(1770,94,36,36,'♡ 收藏','favorites'), H(1810,94,36,36,'⤡ 收起 → 侧栏态','pdp-panel'), H(1850,94,38,36,'✕ 关闭 → 回首页','home'), EXT(1039,580,465,44,'Buy at Walmart ↗','跳商家站')]},
+  {key:'pdp-side-lowest', node:'1128-115552', fname:'最低价', name:'PDP 侧栏内容 · 最低价版', tag:'方案',
+   desc:'侧栏完整内容（520 宽，可滚），主打「Lowest of 3 stores」价格条。',
+   hot:[H(400,90,80,80,'⤢ 展开 → 全屏 PDP','pdp-full'), H(455,90,60,80,'✕ 关闭','home'), H(0,90,80,80,'♡ 收藏','favorites')]},
+  {key:'pdp-side-compare', node:'1218-266882', fname:'对比平台', name:'PDP 侧栏内容 · 对比平台版', tag:'方案',
+   desc:'另一版侧栏，平台对比信息更突出。两版二选一。',
+   hot:[H(400,90,80,80,'⤢ 展开 → 全屏 PDP','pdp-full'), H(455,90,60,80,'✕ 关闭','home')]},
+ ]},
+ {key:'s7', name:'Auto-task 任务列表', figmaBar:'Auto Task / 普通版autotask', screens:[
+  {key:'autotask', node:'1527-79414', fname:'Auto-task / Desktop / All / Collapsed', name:'Auto-task 列表',
+   desc:'顶栏 Auto-task 进入。筛选 All / Target reached / Watching / Paused；每张任务卡有开关、Adjust with Okiee、… 菜单。',
+   hot:[...navAuto(), H(1465,218,150,38,'+ Add Auto-Task → 下拉：Create in okiee / Create Now','at-add-menu'), NOTE(331,218,430,38,'筛选 tab','切换列表，不换页'),
+     NOTE(331,280,1284,24,'从对话跳回来后，哪些 task 有更新？设计稿里任务卡没有「有更新」标识','Q2 待确认：是否要在 tab 计数 / 任务卡上加更新提示'),
+     H(331,300,629,210,'任务卡商品名 › → 全屏 PDP','pdp-full'), NOTE(900,330,60,30,'开关','暂停 / 恢复任务'),
+     H(760,466,130,34,'Adjust with Okiee → 对话内编辑任务（推断）','at-chat-form'), H(905,466,40,34,'… 菜单 → Delete task','at-del-menu'),
+     H(988,300,627,210,'任务卡 → 全屏 PDP','pdp-full'), H(1415,466,130,34,'Adjust with Okiee','at-chat-form'), H(1560,466,40,34,'… 菜单','at-del-menu'),
+     H(331,560,629,210,'任务卡','pdp-full'), H(988,560,627,210,'任务卡','pdp-full'), H(331,826,629,207,'任务卡（Target reached）','pdp-full'), H(988,826,627,207,'任务卡（Paused）','pdp-full')]},
+  {key:'at-add-menu', node:'1519-74765', fname:'Auto-task / Desktop / All / Expanded', name:'Auto-task · Add 下拉菜单',
+   desc:'Add Auto-Task 展开两个选项：Create in okiee（在 Okiee 内建任务）、Create Now（立即创建）。',
+   hot:[...navAuto(), H(1455,246,152,36,'Create in okiee → 建任务弹窗（Track Price Drops）','at-add'), H(1455,292,152,36,'Create Now → 进 Agent 对话建任务（推断）','at-chat'), H(0,0,1400,1080,'点别处 → 收起菜单','autotask',{under:true})]},
+  {key:'at-add', node:'1519-74444', fname:'Add Auto-Task', name:'Auto-task · 建任务弹窗',
+   desc:'复用 Track Price Drops 弹窗，背景是任务列表。',
+   hot:[...navAuto(), H(1424,164,40,40,'✕ 关闭 → 回列表','autotask'), H(1395,280,46,44,'发送 → 添加成功 toast','at-added'), H(907,486,548,424,'选最近浏览商品 → 添加成功','at-added'), H(1088,378,192,30,'Drop a photo / browse','at-added'), H(0,0,1920,1080,'点遮罩 → 关闭','autotask',{under:true})]},
+  {key:'at-added', node:'1519-74666', fname:'添加成功', name:'Auto-task · Added successfully',
+   desc:'顶部居中 toast，几秒后消失，列表刷新出新任务。',
+   hot:[...navAuto(), NOTE(853,79,214,44,'Added successfully toast','自动消失'), H(331,300,1284,733,'任务列表 → 继续操作','autotask')]},
+  {key:'at-del-menu', node:'1519-74695', fname:'Delete', name:'Auto-task · … 菜单（Delete task）',
+   desc:'点卡片右下 … 弹出 Delete task。',
+   hot:[...navAuto(), H(872,496,100,32,'Delete task → 二次确认','at-del-confirm'), H(0,0,1920,1080,'点别处 → 收起','autotask',{under:true})]},
+  {key:'at-del-confirm', node:'1519-74723', fname:'Delete', name:'Auto-task · 删除确认',
+   desc:'“Do you want to remove this Price tracker?” Cancel / Delete。',
+   hot:[H(1157,445,38,38,'✕ → 取消','autotask'), H(988,544,82,38,'Cancel → 回列表','autotask'), H(1095,544,90,38,'Delete → 删除并回列表','autotask')]},
+  {key:'at-main-agent', node:'1542-82808', fname:'Delete（普通版autotask）', name:'Auto-task · 含 Okiee Main Agent 任务',
+   desc:'普通版任务卡：除 Price tracker 外还有 “Okiee Main Agent · Boss Email Alert” 这类 prompt 型任务。',
+   hot:[...navAuto(), H(1450,200,150,32,'+ Add Auto-Task','at-add-menu'), H(320,258,629,235,'Boss Email Alert 任务卡 → 查看 / 编辑 prompt','at-prompt'), H(757,448,130,30,'Adjust with Okiee → 编辑 prompt 弹窗','at-prompt'), H(988,300,627,210,'Price tracker 卡','pdp-full')]},
+  {key:'at-prompt', node:'1542-94139', fname:'prompt', name:'Auto-task · 编辑 prompt 弹窗',
+   desc:'Boss Email Alert · Run by Slide Agent。描述 + Prompt 文本框，改动后 Update 高亮。',
+   hot:[H(1305,370,38,38,'✕ 关闭 → 回列表','at-main-agent'), NOTE(1260,600,700,80,'Prompt 文本框','可编辑'), H(1227,664,110,38,'Update → 保存并回列表','at-main-agent'), NOTE(1264,370,38,38,'… 菜单','删除等')]},
+ ]},
+ {key:'s8', name:'对话中的 Auto-task', figmaBar:'对话中的autotask / 会话流程内容', screens:[
+  {key:'at-chat', node:'1530-81761', fname:'点击唤起chat', name:'对话建任务 · Agent 已设提醒 + 商品列表',
+   desc:'Create Now / 自然语言「Alert me if … drops below $42」→ Agent 直接建提醒，并列出相关商品。',
+   hot:[...hdr(false), ...panel('tp-full','home','at-chat-form','追问「Track … prices」→ 设价表单'), H(1290,354,577,566,'商品行 → 商品详情侧栏','pdp-panel'), H(944,20,100,42,'Auto-task → 列表里查看','autotask')]},
+  {key:'at-chat-form', node:'1530-81605', fname:'点击唤起chat', name:'对话建任务 · 设价表单（含 Task expiry）',
+   desc:'比二级页多一行 Task expiry（7 / 30 / 90 days）。商品卡右侧 › 可进编辑弹窗。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), H(1301,407,555,64,'商品卡 › → Edit Auto task 弹窗','at-edit'), NOTE(1306,617,546,28,'Quick input','填充期望价'), NOTE(1306,693,546,28,'Task expiry','任务有效期'), H(1306,748,546,36,'Set Price Tracker → Set successfully','tp-set-ok')]},
+  {key:'at-edit', node:'1535-76900', fname:'点击唤起chat', name:'对话建任务 · Edit Auto task 弹窗',
+   desc:'居中弹窗编辑已存在的任务：期望价、快捷折扣、有效期，Update Price Tracker。',
+   hot:[H(1155,321,38,38,'✕ 关闭 → 回对话','at-chat-form'), H(977,713,208,36,'Update Price Tracker → 更新成功 toast','at-updated'), NOTE(1270,590,440,110,'Quick input / Task expiry','改参数')]},
+  {key:'at-updated', node:'1535-80241', fname:'点击唤起chat', name:'对话建任务 · Updated toast',
+   desc:'顶部 toast “Updated: alert at Rp1.824.000”，对话里的表单同步成新值。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), NOTE(828,103,272,36,'Updated toast','自动消失'), H(1301,407,555,64,'商品卡 › → 再次编辑','at-edit'), H(1306,748,546,36,'Set Price Tracker','tp-set-ok')]},
+  {key:'result-opt1', node:'1685-87408', fname:'OPT1', name:'会话结果卡 · OPT1（单卡 + Buy Now）', tag:'方案',
+   desc:'建完提醒后的结果卡方案 1：单商品卡，图在左，Buy Now 通栏。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), EXT(1472,452,358,36,'Buy Now','跳商家购买页（站外）'), H(1300,470,160,60,'商品图 → 商品详情侧栏','pdp-panel')]},
+  {key:'result-opt2', node:'1685-93098', fname:'OPT2', name:'会话结果卡 · OPT2（单卡横版）', tag:'方案',
+   desc:'方案 2：卡片通栏，图更大。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), EXT(1312,452,533,36,'Buy Now','跳商家购买页（站外）'), H(1300,470,160,60,'商品图 → 商品详情侧栏','pdp-panel')]},
+  {key:'result-big', node:'1685-99275', fname:'大卡', name:'会话结果卡 · 大卡横滑', tag:'方案',
+   desc:'方案 3：多商品大卡横向滑动，每张带 Buy Now，右侧箭头翻页。',
+   hot:[...hdr(false), ...panel('tp-full','home',null), EXT(1306,800,240,26,'Buy Now','跳商家购买页（站外）'), EXT(1600,800,240,26,'Buy Now','跳商家购买页（站外）'), NOTE(1840,475,40,40,'› 翻页','横滑下一张'), H(1306,440,240,300,'商品图 → 商品详情侧栏','pdp-panel')]},
+  {key:'agent-comp', node:'1535-73317', fname:'Okiee Agent / Compare Prices / DERBYSTAR', name:'Agent 侧栏组件 · 完整对话内容', tag:'组件',
+   desc:'侧栏组件原尺寸（680 宽）：带入商品 chip → 用户提问 → 回复 → 设价表单 → Alert me 回显 → Auto-task created。研发对样式用。',
+   hot:[H(560,50,60,60,'⤢ 展开','tp-full'), H(620,50,60,60,'✕ 关闭','home'), NOTE(40,1050,600,60,'Set Price Tracker 置灰','未填价前不可点')]},
+ ]},
+ {key:'s9', name:'Favorites 收藏（Like）', figmaBar:'Like', screens:[
+  {key:'favorites', node:'1519-67025', fname:'Favorites Products', name:'Favorites 收藏列表',
+   desc:'顶栏 Favorites 进入；4 列商品卡，点卡片在右侧打开商品详情侧栏。',
+   hot:[...hdr(false), H(81,200,422,623,'收藏商品卡 → 商品详情侧栏','fav-panel'), H(527,200,420,623,'收藏商品卡','fav-panel'), H(973,200,420,623,'收藏商品卡','fav-panel'), H(1417,200,422,623,'收藏商品卡','fav-panel'), H(81,845,1758,235,'第二行商品卡','fav-panel')]},
+  {key:'fav-panel', node:'1519-67670', fname:'Favorites Products', name:'Favorites · 商品详情侧栏',
+   desc:'列表压缩为 3 列，右侧侧栏同 PDP 侧栏；左上实心心形可取消收藏。',
+   hot:[...hdr(false), H(1834,108,38,38,'✕ 关闭侧栏 → 回列表','favorites'), H(1445,108,38,38,'♥ 取消收藏 → 从列表移除','favorites'), H(1440,170,440,900,'侧栏内容 → 全屏 PDP','pdp-full'), H(79,200,1330,880,'其他收藏卡 → 切换侧栏内容','fav-panel')]},
+ ]},
+];
+
+const SCREENS = {}; const ORDER = [];
+SECTIONS.forEach(s => s.screens.forEach(sc => { sc.section = s; SCREENS[sc.key] = sc; ORDER.push(sc.key); }));
+
+// ---------- open questions (from the 11.2 review thread) ----------
+const QUESTIONS = [
+ {n:1, area:'Top deals of the day', text:'横滑前端多少张？', owner:'产品', screens:['home','home-long']},
+ {n:2, area:'Auto-task', text:'跳转到 Auto-task 页面之后，task 页面是否有提示哪些 task 有更新', owner:'产品', screens:['tp-set-ok','at-chat','autotask']},
+ {n:3, area:'Deals for you', text:'是否有分页', owner:'产品', screens:['home-long']},
+ {n:4, area:'Deals for you', text:'Figma 的筛选项没修改，这期只有场景和折扣', owner:'产品', screens:['home-long']},
+ {n:5, area:'Shop the whole list', text:'点击后跳转到 chat 的页面样式是什么样', owner:'产品', screens:['home-long','home-chat']},
+ {n:6, area:'整页跳转', text:'整个页面的跳转流程再梳理一下，哪些跳转至 chat 后需要不同的承接，具体承接的会话和展示内容', owner:'产品 · 设计', screens:['home','cp-popup-link','tp-popup','bd-popup-sel','id-popup-sel','pdp-full','at-add-menu']},
+ {n:7, area:'最上面 4 个能力卡', text:'每个能力卡内对应的具体信息', owner:'产品 · 设计', screens:['home','cp-popup','tp-popup','bd-popup','id-popup']},
+ {n:8, area:'顶部 5 个推荐 query', text:'点击后进入 chat 的承接样式需要保持一致', owner:'产品', meeting:true, screens:['home','home-chat'],
+  gap:'交互稿只出了一帧「点击唤起chat」（Coco Croissant Bag 的回复），没有分别给 5 个 query 的承接；5 条 query 里第 4、5 条还是同一句话。需要明确：统一承接模板是什么，回复里是否都带商品卡。'},
+ {n:9, area:'单商品卡', text:'点击后进入 PDP，还可以进入 chat 吗', owner:'产品', meeting:true, screens:['home','pdp-panel','pdp-full'],
+  gap:'交互稿里商品卡 → PDP 侧栏没有连线，是按惯例推断的。全屏 PDP 有 Ask Okiee 和 Track price / Is this a good price? / Compare with another 三个入口进 chat；PDP 侧栏态没有任何进 chat 的入口。需要明确：侧栏态要不要加 chat 入口，卡片上要不要直接给「问 Okiee」。'},
+ {n:10, area:'4 个能力卡弹窗', text:'哪些是必选项、哪些可以不选，是否支持多选', owner:'产品', meeting:true, screens:['cp-popup','tp-popup','bd-popup','id-popup'],
+  gap:'交互稿能看出来的：Compare / Track 三种输入二选一（链接 / 图片 / 最近浏览）；Budget 选品类后 Find picks 才亮，预算默认 $100；Ideas 要选齐对象 + 场合，Tell Okiee more 可选。看不出来的：品类 / 对象 / 场合能不能多选，Budget 的「Anything to consider」是不是必填，Track 不填目标价时的默认行为。'},
+ {n:11, area:'Shop the Whole List 清单卡', text:'点击清单卡进入 Agent chat，需要补充携带哪些信息给 chat', owner:'产品', meeting:true, screens:['home-long','home-chat'],
+  gap:'已定：点清单卡进 Agent 对话（不是 Carry On，也不是合集详情页）。交互稿没写带入 chat 的上下文，需要补充：① 带入的 query 文案（如 “Help me shop the whole list: <清单名>”）；② 清单元信息（清单名、场景、商品数、预算区间）；③ 清单内商品列表（商品 id / 名称 / 价格 / 来源店）；④ 是否自动触发首轮回复，还是只预填输入框等用户发送；⑤ 承接样式沿用 Q8 的统一模板还是清单专用卡。'},
+];
+const CHAT_SCREENS = new Set(['home-chat','cp-chat','tp-chat','tp-chat-form','bd-chat','id-chat','at-chat']);
+const isChatScreen = k => CHAT_SCREENS.has(k) || /-full$/.test(k) || /^at-/.test(k) || /^result-/.test(k);
+// tag hotspots with the questions they relate to
+ORDER.forEach(k => {
+  const sc = SCREENS[k];
+  sc.hot.forEach(h => {
+    const q = new Set(); const L = h.label;
+    if ((k==='home'||k==='home-long'||k==='home-logged') && (L.startsWith('Top deals') || (L.includes('商品卡') && h.y===851))) q.add(1);
+    if ((k==='tp-set-ok'||k==='tp-chat'||k==='at-chat') && L.startsWith('Auto-task')) q.add(2);
+    if (k==='autotask' && (L.startsWith('筛选') || L.startsWith('从对话跳回来'))) q.add(2);
+    if (k==='home-long' && L.startsWith('Deals for You 商品流')) q.add(3);
+    if (k==='home-long' && L.startsWith('Deals for You 筛选')) q.add(4);
+    if (k==='home-long' && L.includes('合集卡')) q.add(5);
+    if (k==='home-chat' && !h.under && !L.startsWith('⤢') && !L.startsWith('✕') && !L.includes('卡片 →') && !/^(Logo|Explore|Chat|Auto-task|Favorites|Add Okiee|Log in)/.test(L)) q.add(5);
+    if (h.to && CHAT_SCREENS.has(h.to) && !isChatScreen(k) && !h.under) q.add(6);
+    if (k==='at-add-menu' && L.startsWith('Create Now')) q.add(6);
+    if ((k==='home'||k==='home-logged'||k==='home-long') && L.includes('卡片 →')) q.add(7);
+    if (['cp-popup','tp-popup','bd-popup','id-popup'].includes(k) && !h.under && !L.startsWith('✕') && !/^(Logo|Explore|Chat|Auto-task|Favorites|Add Okiee|Log in)/.test(L)) q.add(7);
+    if ((k==='home'||k==='home-logged'||k==='home-long') && L.includes('推荐问题 chip')) q.add(8);
+    if (k==='home-chat' && (L.startsWith('结果商品卡') || L.startsWith('追问') )) q.add(8);
+    if ((k==='home'||k==='home-logged') && (L.startsWith('Top deals') || (L.includes('商品卡') && h.y===851))) q.add(9);
+    if (k==='pdp-panel' && !h.under && !/^(Logo|Explore|Chat|Auto-task|Favorites|Add Okiee|Log in)/.test(L)) q.add(9);
+    if (k==='pdp-full' && (L.startsWith('Ask Okiee') || L.startsWith('Track price') || L.startsWith('Is this') || L.startsWith('Compare with'))) q.add(9);
+    if (['cp-popup','tp-popup','bd-popup','id-popup'].includes(k) && !h.under && !L.startsWith('✕') && !/^(Logo|Explore|Chat|Auto-task|Favorites|Add Okiee|Log in)/.test(L)) q.add(10);
+    if (k==='home-long' && (L.includes('合集卡') || L.includes('清单卡'))) q.add(11);
+    if (k==='home-chat' && (L.startsWith('结果商品卡') || L.startsWith('追问') || L.includes('带入'))) q.add(11);
+    if (q.size) h.q = [...q].sort((a,b)=>a-b);
+  });
+});
+const MODES = [['none','热区已隐藏'],['q','只看待确认'],['all','全部热区']];
+let modeIdx = 0;
+
+// ---------- state ----------
+let current = null; const hist = [];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function toastMsg(t){ const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),2200); }
+
+function go(key, push=true){
+  if(!SCREENS[key]) key = 'home';
+  if(current && push && current!==key) hist.push(current);
+  current = key;
+  if(location.hash !== '#'+key) history.replaceState(null,'','#'+key);
+  render();
+}
+function back(){ const k = hist.pop(); if(k) go(k,false); else go('home',false); }
+
+function render(){
+  const sc = SCREENS[current]; const [W,Hh] = SIZES[current];
+  $('crumbs').textContent = sc.section.name + ' · Figma 分区「' + sc.section.figmaBar + '」';
+  $('title').textContent = sc.name;
+  const qsHere = [...new Set(sc.hot.flatMap(h=>h.q||[]))].sort((a,b)=>a-b);
+  $('meta').innerHTML = `<span>图层名 <code>${esc(sc.fname)}</code></span><span>尺寸 <code>${W}×${Hh}</code></span>${sc.tag?`<span class="tag">${esc(sc.tag)}</span>`:''}`;
+  $('qdetail').hidden = true; $('stage').dataset.focus = '';
+  $('qstrip').innerHTML = qsHere.length
+    ? `<span class="lead">本页待确认</span>` + qsHere.map(n=>{ const q=QUESTIONS[n-1]; return `<button type="button" class="${q.meeting?'mt':''}" data-q="${n}" aria-expanded="false" title="点开看全文，并在图上高亮相关位置"><span class="qmark">Q${n}</span>${esc(q.area)} · ${esc(q.text.length>22?q.text.slice(0,22)+'…':q.text)}${q.meeting?'<i class="mtag">开会明确</i>':''}</button>`; }).join('')
+    : `<span class="none">本页没有待确认项。悬停页面任意位置可看跳转去向，右上角可打开热区框线。</span>`;
+  $('qstrip').querySelectorAll('button[data-q]').forEach(b=>b.addEventListener('click',()=>showQDetail(b)));
+  renderComments();
+  $('desc').textContent = sc.desc;
+  const stage = $('stage'); const img = $('shot');
+  stage.style.maxWidth = W >= 1600 ? '100%' : (W <= 700 ? '520px' : '1100px');
+  img.src = 'img/' + current + '.webp'; img.alt = sc.name;
+  stage.querySelectorAll('.hot').forEach(e=>e.remove());
+  const hs = sc.hot.slice().sort((a,b)=> (a.under?-1:0) - (b.under?-1:0));
+  hs.forEach((h,i)=>{
+    const b = document.createElement('button'); b.className='hot' + (h.ext?' ext':'') + (!h.to&&!h.ext?' note':'') + (h.under?' under':'') + (h.q?' q':'');
+    if(h.q) b.dataset.qs = ',' + h.q.join(',') + ',';
+    b.style.left=(h.x/W*100)+'%'; b.style.top=(h.y/Hh*100)+'%'; b.style.width=(h.w/W*100)+'%'; b.style.height=(h.h/Hh*100)+'%';
+    if(h.under){ b.style.border='0'; b.style.background='transparent'; b.style.zIndex=0; } else b.style.zIndex = h.q ? 3 : 2;
+    if(h.y/Hh > 0.82) b.classList.add('up'); if(h.x/W > 0.7) b.classList.add('right');
+    if(h.q && h.y/Hh < 0.04) { b.classList.remove('up'); b.classList.add('low'); }
+    const target = h.to ? SCREENS[h.to] : null;
+    b.innerHTML = `${h.q?`<i class="qb">${h.q.map(n=>'Q'+n).join(' ')}</i>`:''}<span class="lbl">${h.q?`<b style="color:var(--q)">${h.q.map(n=>'Q'+n).join(' ')}</b> `:''}${esc(h.label)}${target?`<br><span style="opacity:.75">→ ${esc(target.name)}</span>`:''}${h.note?`<br><span style="opacity:.75">${esc(h.note)}</span>`:''}</span>`;
+    b.setAttribute('aria-label', h.label + (target?' → '+target.name:''));
+    b.addEventListener('click', ev=>{ ev.stopPropagation(); if(h.to) go(h.to); else if(h.ext) toastMsg('外链：' + (h.note||h.label)); else toastMsg(h.note||h.label); });
+    stage.appendChild(b);
+  });
+  stage.classList.remove('flash'); void stage.offsetWidth; stage.classList.add('flash');
+  // links table
+  const rows = sc.hot.filter(h=>!h.under).map(h=>{
+    const t = h.to ? SCREENS[h.to] : null;
+    const toCell = t ? `<span class="to">${esc(t.name)} <span style="opacity:.6;font-weight:500">· ${esc(t.section.name)}</span></span>` : h.ext ? `<span class="to ext">外链</span>` : `<span class="to note">不跳页</span>`;
+    return `<tr class="${t?'link':''}" data-to="${t?t.key:''}"><td>${esc(h.label.split(' → ')[0])}</td><td>${toCell}</td><td style="color:var(--muted)">${esc(h.note || (h.label.includes(' → ') ? h.label.split(' → ').slice(1).join(' → ') : ''))}</td></tr>`;
+  });
+  $('links').innerHTML = rows.join('') || '<tr><td colspan="3" style="color:var(--muted)">该图为参考组件，无跳转。</td></tr>';
+  $('links').querySelectorAll('tr.link').forEach(tr=>tr.addEventListener('click',()=>go(tr.dataset.to)));
+  $('back').disabled = hist.length===0;
+  // tree highlight
+  document.querySelectorAll('#tree li button').forEach(b=>b.setAttribute('aria-current', b.dataset.key===current?'page':'false'));
+  const sec = document.querySelector(`#tree .sec[data-key="${sc.section.key}"]`); if(sec) sec.dataset.open='true';
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+// ---------- question detail (expands under the strip) ----------
+function showQDetail(btn){
+  const n = +btn.dataset.q; const q = QUESTIONS[n-1]; const d = $('qdetail');
+  const already = btn.getAttribute('aria-expanded')==='true';
+  $('qstrip').querySelectorAll('button[data-q]').forEach(b=>b.setAttribute('aria-expanded','false'));
+  const hots = $('stage').querySelectorAll('.hot.q');
+  const resetBadge = h => { const qb=h.querySelector('.qb'); if(qb) qb.textContent = h.dataset.qs.slice(1,-1).split(',').map(x=>'Q'+x).join(' '); };
+  if(already){ d.hidden = true; hots.forEach(h=>{ h.classList.remove('focus'); resetBadge(h); }); $('stage').dataset.focus=''; return; }
+  btn.setAttribute('aria-expanded','true');
+  hots.forEach(h=>{ const on = h.dataset.qs.includes(','+n+','); h.classList.toggle('focus', on); const qb=h.querySelector('.qb'); if(qb) qb.textContent = on ? 'Q'+n : qb.textContent; if(!on) resetBadge(h); });
+  $('stage').dataset.focus = n;
+  d.className = 'qdetail' + (q.meeting?' mt':'');
+  d.innerHTML = `<span class="qn">Q${q.n}</span><div><div class="qt"><span class="area">${esc(q.area)}</span>${esc(q.text)}${q.meeting?'<i class="mtag">交互稿无答案 · 开会明确</i>':''}</div>${q.gap?`<div class="gap">${esc(q.gap)}</div>`:''}<div class="qo">负责：${esc(q.owner)} · 相关页面：</div><div class="qs">${q.screens.map(k=>`<button type="button" data-to="${k}" aria-current="${k===current?'page':'false'}">${esc(SCREENS[k].name)}</button>`).join('')}</div><div class="qo" style="margin-top:6px">图上红框 = 这条问题涉及的位置；再点一次顶部标签取消高亮。</div></div>`;
+  d.querySelectorAll('button[data-to]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.to)));
+  d.hidden = false;
+}
+
+// ---------- comments (stored in this browser; export to share) ----------
+const CKEY = 'pickoo-comments';
+function loadC(){ try{ return JSON.parse(localStorage.getItem(CKEY)||'[]'); }catch(e){ return []; } }
+function saveC(list){ try{ localStorage.setItem(CKEY, JSON.stringify(list)); }catch(e){ toastMsg('浏览器禁止本地存储，评论无法保存'); } }
+const fmtTime = t => { const d = new Date(t); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+function renderComments(){
+  const all = loadC(); const showAll = $('call').checked;
+  const list = (showAll ? all : all.filter(c=>c.page===current)).slice().sort((a,b)=>b.t-a.t);
+  $('ccnt').textContent = showAll ? all.length : `${list.length} / ${all.length}`;
+  $('clist').innerHTML = list.length ? list.map(c=>`<li data-id="${c.id}"><div class="ch"><b>${esc(c.name||'匿名')}</b><span>${fmtTime(c.t)}</span>${showAll?`<span class="pg" data-to="${esc(c.page)}">${esc(SCREENS[c.page]?SCREENS[c.page].name:c.page)}</span>`:''}</div><button class="cx" type="button" title="删除这条评论">删除</button><div class="cb">${esc(c.text)}</div></li>`).join('')
+    : `<li class="empty">${showAll?'还没有任何评论。':'这个页面还没有评论，在上面写第一条。'}</li>`;
+  $('clist').querySelectorAll('.cx').forEach(b=>b.addEventListener('click',()=>{ const id=b.closest('li').dataset.id; saveC(loadC().filter(c=>c.id!==id)); renderComments(); }));
+  $('clist').querySelectorAll('.pg').forEach(b=>b.addEventListener('click',()=>go(b.dataset.to)));
+}
+function commentsMarkdown(){
+  const all = loadC(); if(!all.length) return '';
+  const byPage = {}; all.forEach(c=>{ (byPage[c.page] = byPage[c.page]||[]).push(c); });
+  const lines = [`# Pickoo 官网 Demo 评论（${new Date().toLocaleDateString()}）`,''];
+  ORDER.filter(k=>byPage[k]).concat(Object.keys(byPage).filter(k=>!SCREENS[k])).forEach(k=>{
+    const sc = SCREENS[k]; lines.push(`## ${sc?sc.name:k}${sc?`（${sc.section.name}）`:''}`);
+    byPage[k].sort((a,b)=>a.t-b.t).forEach(c=>lines.push(`- **${c.name||'匿名'}** ${fmtTime(c.t)}：${c.text.replace(/\n/g,' ')}`));
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+$('cform').addEventListener('submit', e=>{
+  e.preventDefault();
+  const text = $('ctext').value.trim(); if(!text) return;
+  const name = $('cname').value.trim(); try{ localStorage.setItem('pickoo-cname', name); }catch(err){}
+  const all = loadC(); all.push({id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), page: current, name, text, t: Date.now()});
+  saveC(all); $('ctext').value=''; renderComments(); toastMsg('评论已保存在本浏览器');
+});
+$('call').addEventListener('change', renderComments);
+$('ccopy').addEventListener('click', async ()=>{
+  const md = commentsMarkdown(); if(!md){ toastMsg('还没有评论'); return; }
+  try{ await navigator.clipboard.writeText(md); toastMsg('已复制全部评论，可以粘到群里'); }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=md; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toastMsg('已复制全部评论'); }
+});
+$('cdl').addEventListener('click', ()=>{
+  const md = commentsMarkdown(); if(!md){ toastMsg('还没有评论'); return; }
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'})); a.download=`pickoo-demo-comments-${new Date().toISOString().slice(0,10)}.md`; a.click(); URL.revokeObjectURL(a.href);
+});
+try{ $('cname').value = localStorage.getItem('pickoo-cname')||''; }catch(e){}
+
+// ---------- sidebar ----------
+function buildTree(){
+  $('tree').innerHTML = SECTIONS.map((s,i)=>`<div class="sec" data-key="${s.key}" data-open="${i===0?'true':'false'}">
+    <button type="button"><span class="n">${i+1}</span><span>${esc(s.name)}</span><span class="caret">▾</span></button>
+    <ul>${s.screens.map((sc,j)=>`<li><button type="button" data-key="${sc.key}"><span style="color:var(--muted);font-size:11px;min-width:18px">${i+1}.${j+1}</span><span style="flex:1;min-width:0">${esc(sc.name)}</span>${sc.tag?`<span class="tag">${esc(sc.tag)}</span>`:''}</button></li>`).join('')}</ul></div>`).join('');
+  $('tree').querySelectorAll('.sec > button').forEach(b=>b.addEventListener('click',()=>{ const s=b.parentElement; s.dataset.open = s.dataset.open==='true'?'false':'true'; s.dataset.force = s.dataset.open; }));
+  $('tree').querySelectorAll('li button').forEach(b=>b.addEventListener('click',()=>{ showTab('demo'); go(b.dataset.key); }));
+}
+
+// ---------- overview ----------
+function buildOverview(){
+  $('ov').innerHTML = SECTIONS.map((s,i)=>`<div class="ov-sec"><h3><span class="n" style="min-width:24px;height:24px;border-radius:7px;background:var(--surface-2);display:grid;place-items:center;font-size:12px">${i+1}</span>${esc(s.name)}</h3><p class="sub">Figma 分区：${esc(s.figmaBar)} · ${s.screens.length} 个页面状态</p>
+    <div class="cards">${s.screens.map((sc,j)=>{
+      const outs = new Map();
+      sc.hot.filter(h=>!h.under).forEach(h=>{ const k = h.to || (h.ext?'__ext':'__note'); if(!outs.has(k)) outs.set(k,h.label.split(' → ')[0]); });
+      const chips = [...outs.entries()].filter(([k])=>k!=='__note').map(([k,l])=> k==='__ext' ? `<button class="ext" type="button" data-ext="1">外链</button>` : `<button type="button" data-to="${k}" title="${esc(l)}">${esc(SCREENS[k].name)}</button>`).join('');
+      return `<div class="card"><div class="thumb" data-to="${sc.key}"><img loading="lazy" src="img/${sc.key}.webp" alt=""><span class="idx">${i+1}.${j+1}</span></div><div class="body"><div class="name" data-to="${sc.key}">${esc(sc.name)}${sc.tag?` <span class="tag" style="margin-left:4px">${esc(sc.tag)}</span>`:''}</div><div class="outs">${chips || '<button class="none" type="button">无跳转</button>'}</div></div></div>`;
+    }).join('')}</div></div>`).join('');
+  $('ov').querySelectorAll('[data-to]').forEach(el=>el.addEventListener('click',()=>{ showTab('demo'); go(el.dataset.to); }));
+  $('ov').querySelectorAll('[data-ext]').forEach(el=>el.addEventListener('click',()=>toastMsg('站外链接：商家站 / Chrome 商店')));
+}
+
+function showTab(t){
+  ['demo','ov','about'].forEach(k=>{ $('view-'+k).hidden = k!==t; $('tab-'+k).setAttribute('aria-selected', k===t?'true':'false'); });
+  try{ localStorage.setItem('pickoo-tab', t); }catch(e){}
+  if(t!=='demo') window.scrollTo({top:0});
+}
+$('tab-demo').onclick=()=>showTab('demo'); $('tab-ov').onclick=()=>showTab('ov'); $('tab-about').onclick=()=>showTab('about');
+$('back').onclick = back;
+function applyMode(){ const [m,label] = MODES[modeIdx]; $('stage').dataset.mode = m; $('toggle').textContent = label; $('toggle').setAttribute('aria-pressed', m!=='none'); try{localStorage.setItem('pickoo-mode', String(modeIdx));}catch(e){} }
+$('toggle').onclick = ()=>{ modeIdx = (modeIdx+1) % MODES.length; applyMode(); };
+document.addEventListener('keydown', e=>{ if(e.target.closest('input,textarea')) return; if(e.key==='ArrowLeft'){ back(); } if(e.key==='Escape'){ showTab('demo'); go('home'); } });
+window.addEventListener('hashchange', ()=>{ const k = location.hash.replace('#',''); if(k && k!==current && SCREENS[k]){ showTab('demo'); go(k); } });
+
+buildTree(); buildOverview();
+try{ const m = parseInt(localStorage.getItem('pickoo-mode')); if(!isNaN(m) && m>=0 && m<MODES.length) modeIdx = m; }catch(e){}
+applyMode();
+const startKey = location.hash.replace('#',''); go(SCREENS[startKey] ? startKey : 'home', false);
+</script>
