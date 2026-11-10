@@ -20,6 +20,7 @@
   --ok:#4CC38A; --warn:#E0A04A; --q:#FF8A4C; --q-soft:#3D2416; --mt:#FF6B7A; --mt-soft:#3F1C21; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); color-scheme:dark }
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--font-ui);}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -129,6 +130,24 @@ a{color:var(--accent-ink)}
 .stage[data-focus]:not([data-focus=""]) .hot.q:not(.focus) .qb{display:none}
 .stage[data-mode="none"] .hot.q.focus .qb{display:inline;background:var(--mt)}
 .stage .hot.q.focus .qb{background:var(--mt)}
+
+/* decisions from the dev review */
+.dstrip{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:12px;padding:10px 14px;margin:0 0 10px}
+.dstrip:empty{display:none}
+.dstrip .dh{display:flex;align-items:center;gap:8px;font-weight:800;font-size:12.5px;color:var(--ok);margin-bottom:6px}
+.dstrip ul,.dec ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.dstrip li,.dec li{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;font-size:13px;line-height:1.5}
+.st{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;white-space:nowrap;margin-top:2px}
+.st.ok{background:rgba(29,143,91,.12);color:var(--ok)}
+.st.td{background:var(--q-soft);color:var(--q)}
+.own{color:var(--muted);font-size:12px;margin-left:6px;white-space:nowrap}
+.dec h2{font-size:20px;margin:6px 0 2px}
+.dec .lead{color:var(--muted);max-width:70ch;margin:0 0 16px}
+.dec .grp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px}
+.dec .grp h3{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dec .grp h3 button{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.dec .grp h3 button:hover{background:var(--accent);color:#fff}
+.qref{font-family:var(--font-mono);font-size:10px;font-weight:800;color:var(--q);margin-left:6px}
 
 /* comments */
 .chead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
@@ -242,7 +261,8 @@ tr.link:hover td{background:var(--surface-2)}
     <div class="brand"><div class="dot">P</div><h1>Pickoo 官网 Demo<small>Okiee 官网 · 11.2 定稿 · 可点击原型</small></h1></div>
     <div class="tabs" role="tablist">
       <button role="tab" id="tab-demo" aria-selected="true">演示</button>
-      <button role="tab" id="tab-ov" aria-selected="false">流程总览</button>
+      <button role="tab" id="tab-ov" aria-selected="false">总览</button>
+      <button role="tab" id="tab-dec" aria-selected="false">结论</button>
       <button role="tab" id="tab-about" aria-selected="false">说明</button>
     </div>
     <div id="tree"></div>
@@ -258,6 +278,7 @@ tr.link:hover td{background:var(--surface-2)}
       <div class="meta" id="meta"></div>
       <div class="qstrip" id="qstrip"></div>
       <div class="qdetail" id="qdetail" hidden></div>
+      <div class="dstrip" id="dstrip"></div>
       <div class="stage-wrap"><div class="stage" id="stage" data-mode="none"><img id="shot" alt=""></div></div>
       <div class="panel cpanel" id="cpanel">
         <div class="chead"><h3>评论 <span class="ccnt" id="ccnt">0</span></h3><div class="cactions"><button class="btn" id="ccopy" type="button">复制全部评论</button><button class="btn" id="cdl" type="button">下载 .md</button></div></div>
@@ -283,6 +304,12 @@ tr.link:hover td{background:var(--surface-2)}
       <div id="ov"></div>
     </section>
 
+    <section id="view-dec" class="dec" hidden>
+      <h2>评审结论汇总</h2>
+      <p class="lead" id="dec-lead"></p>
+      <div id="dec-list"></div>
+    </section>
+
     <section id="view-about" class="about" hidden>
       <h2>这份 Demo 怎么用</h2>
       <p>目的：让产品和研发在评审时一眼知道「点了这里会去哪个页面」。页面图取自设计稿 <b>Okiee 官网 · 11.2 定稿</b>，热区和跳转关系是按设计稿里的 frame 命名（弹窗 / 点击唤起chat / 展开全屏 / 跳转到chat…）和分区标题整理出来的。</p>
@@ -290,6 +317,7 @@ tr.link:hover td{background:var(--surface-2)}
       <ul>
         <li>页面图上方一行「本页待确认」列出这个页面涉及的评审问题（Q1–Q11），点一下展开全文、责任人和相关页面，同时在图上用红框高亮这条问题涉及的位置。带「开会明确」标签的是交互稿里找不到答案、需要会上定的。</li>
         <li>页面图默认不画框，鼠标悬停任意可点位置会显示去向。右上角按钮可切到「只看待确认」（橙色框标出和问题相关的位置）或「全部热区」（紫色虚线）。</li>
+        <li>「结论」tab 和每页图上方的绿色块是 11/10 和研发过 demo 后的结论，绿色「决定」已定，橙色「待定」带负责人。</li>
         <li>图下方是评论区：写名字和意见，按页面保存在你自己的浏览器里。看完后点「复制全部评论」或「下载 .md」，把汇总发到群里。</li>
         <li>黄色框是外链（Chrome 商店、商家站 Buy Now），灰色框是只做状态说明的元素（置灰按钮、toast 等），点了不会跳页。</li>
         <li><span class="kbd">←</span> 或「返回」回到上一个页面；<span class="kbd">Esc</span> 回首页。每个页面都有独立链接（地址栏 #），可以直接发给别人定位到某个状态。</li>
@@ -571,6 +599,21 @@ const QUESTIONS = [
  {n:11, area:'Shop the Whole List 清单卡', text:'点击清单卡进入 Agent chat，需要补充携带哪些信息给 chat', owner:'产品', meeting:true, screens:['home-long','home-chat'],
   gap:'已定：点清单卡进 Agent 对话（不是 Carry On，也不是合集详情页）。交互稿没写带入 chat 的上下文，需要补充：① 带入的 query 文案（如 “Help me shop the whole list: <清单名>”）；② 清单元信息（清单名、场景、商品数、预算区间）；③ 清单内商品列表（商品 id / 名称 / 价格 / 来源店）；④ 是否自动触发首轮回复，还是只预填输入框等用户发送；⑤ 承接样式沿用 Q8 的统一模板还是清单专用卡。'},
 ];
+// 2026-11-10 与研发讨论的结论（来自页面评论，按页面挂载）
+const DECISIONS = [
+ {pages:['home','home-long'], q:1, st:'待定', text:'Top deals 横滑卡到底多少张：前端定一个 max', own:'@PM'},
+ {pages:['home','home-long'], st:'决定', text:'Top deals 商品卡要做样式区分：Auto-task 已到 target price 的商品、liked 商品降价的商品', own:'@PM'},
+ {pages:['home-long'], q:4, st:'决定', text:'Deals for you 筛选：price / sold 改为 discount%，并增加 hover 解释', own:''},
+ {pages:['cp-popup','cp-popup-link','cp-popup-error','cp-popup-photo'], st:'决定', text:'前端不做链接合法性校验（店铺首页报错态不由前端预判）', own:''},
+ {pages:['cp-popup','cp-popup-picked'], st:'待定', text:'Pick one you viewed 区域是否支持下滑', own:'@PM @前端'},
+ {pages:['bd-popup','bd-popup-sel'], q:10, st:'决定', text:'两个输入框合成一个', own:'@PM'},
+ {pages:['bd-popup','bd-popup-sel'], q:10, st:'决定', text:'品类标签复用 Deals for you 的标签', own:''},
+ {pages:['bd-popup','bd-popup-sel'], q:10, st:'待定', text:'Shops for 和 buyer 是都必填，还是只需填一个', own:'@PM'},
+ {pages:['pdp-panel','pdp-full'], q:9, st:'决定', text:'PDP 页面需要有 Ask Pickoo 入口（侧栏态也要）', own:'@PM'},
+ {pages:['home-chat','home-long'], q:11, st:'决定', text:'清单卡进 Agent 要带的信息：标题、商品 list、单品价格 / 划线价、整单价格', own:'@后端'},
+ {pages:['home-chat','home-long'], q:11, st:'待定', text:'清单卡进 Agent 后，增删改查的 UI 如何呈现', own:'@PM'},
+ {pages:['autotask','at-main-agent'], q:2, st:'待定', text:'Auto-task 的日志展示（含哪些 task 有更新）', own:'@设计 @PM'},
+];
 const CHAT_SCREENS = new Set(['home-chat','cp-chat','tp-chat','tp-chat-form','bd-chat','id-chat','at-chat']);
 const isChatScreen = k => CHAT_SCREENS.has(k) || /-full$/.test(k) || /^at-/.test(k) || /^result-/.test(k);
 // tag hotspots with the questions they relate to
@@ -631,6 +674,8 @@ function render(){
     : `<span class="none">本页没有待确认项。悬停页面任意位置可看跳转去向，右上角可打开热区框线。</span>`;
   $('qstrip').querySelectorAll('button[data-q]').forEach(b=>b.addEventListener('click',()=>showQDetail(b)));
   renderComments();
+  const ds = DECISIONS.filter(d=>d.pages.includes(current));
+  $('dstrip').innerHTML = ds.length ? `<div class="dh">11/10 与研发讨论结论 <span style="color:var(--muted);font-weight:600">· ${ds.length} 条</span></div><ul>${ds.map(d=>`<li><span class="st ${d.st==='决定'?'ok':'td'}">${d.st}</span><span>${esc(d.text)}${d.q?`<span class="qref">Q${d.q}</span>`:''}${d.own?`<span class="own">${esc(d.own)}</span>`:''}</span></li>`).join('')}</ul>` : '';
   $('desc').textContent = sc.desc;
   const stage = $('stage'); const img = $('shot');
   stage.style.maxWidth = W >= 1600 ? '100%' : (W <= 700 ? '520px' : '1100px');
@@ -686,7 +731,7 @@ function showQDetail(btn){
   hots.forEach(h=>{ const on = h.dataset.qs.includes(','+n+','); h.classList.toggle('focus', on); const qb=h.querySelector('.qb'); if(qb) qb.textContent = on ? 'Q'+n : qb.textContent; if(!on) resetBadge(h); });
   $('stage').dataset.focus = n;
   d.className = 'qdetail' + (q.meeting?' mt':'') + (q.done?' dn':'');
-  d.innerHTML = `<span class="qn">Q${q.n}</span><div><div class="qt"><span class="area">${esc(q.area)}</span>${esc(q.text)}${q.meeting?'<i class="mtag">交互稿无答案 · 开会明确</i>':''}${q.done?'<i class="mtag ok">已在 demo 里实现</i>':''}</div>${q.gap?`<div class="gap">${esc(q.gap)}</div>`:''}<div class="qo">负责：${esc(q.owner)} · 相关页面：</div><div class="qs">${q.screens.map(k=>`<button type="button" data-to="${k}" aria-current="${k===current?'page':'false'}">${esc(SCREENS[k].name)}</button>`).join('')}</div><div class="qo" style="margin-top:6px">图上红框 = 这条问题涉及的位置；再点一次顶部标签取消高亮。</div></div>`;
+  d.innerHTML = `<span class="qn">Q${q.n}</span><div><div class="qt"><span class="area">${esc(q.area)}</span>${esc(q.text)}${q.meeting?'<i class="mtag">交互稿无答案 · 开会明确</i>':''}${q.done?'<i class="mtag ok">已在 demo 里实现</i>':''}</div>${q.gap?`<div class="gap">${esc(q.gap)}</div>`:''}${DECISIONS.some(d=>d.q===q.n)?`<div class="gap" style="border-left:3px solid var(--ok)"><b style="color:var(--ok)">11/10 研发讨论：</b>${DECISIONS.filter(d=>d.q===q.n).map(d=>`${d.st==='决定'?'已定':'待定'}：${esc(d.text)}${d.own?' '+esc(d.own):''}`).join('；')}</div>`:''}<div class="qo">负责：${esc(q.owner)} · 相关页面：</div><div class="qs">${q.screens.map(k=>`<button type="button" data-to="${k}" aria-current="${k===current?'page':'false'}">${esc(SCREENS[k].name)}</button>`).join('')}</div><div class="qo" style="margin-top:6px">图上红框 = 这条问题涉及的位置；再点一次顶部标签取消高亮。</div></div>`;
   d.querySelectorAll('button[data-to]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.to)));
   d.hidden = false;
 }
@@ -757,19 +802,28 @@ function buildOverview(){
   $('ov').querySelectorAll('[data-ext]').forEach(el=>el.addEventListener('click',()=>toastMsg('站外链接：商家站 / Chrome 商店')));
 }
 
+function buildDecisions(){
+  const n_ok = DECISIONS.filter(d=>d.st==='决定').length, n_td = DECISIONS.length - n_ok;
+  $('dec-lead').textContent = `2026-11-10 和研发过完 demo 的结论，共 ${DECISIONS.length} 条：${n_ok} 条已定，${n_td} 条待定（带负责人）。按页面分组，点页面名跳到对应页面。`;
+  const groups = []; const seen = new Set();
+  DECISIONS.forEach(d=>{ const k=d.pages[0]; if(!seen.has(k)){ seen.add(k); groups.push(k); } });
+  $('dec-list').innerHTML = groups.map(k=>{ const sc=SCREENS[k]; const items=DECISIONS.filter(d=>d.pages[0]===k);
+    return `<div class="grp"><h3>${esc(sc.section.name)} · ${esc(sc.name)} <button type="button" data-to="${k}">查看页面</button></h3><ul>${items.map(d=>`<li><span class="st ${d.st==='决定'?'ok':'td'}">${d.st}</span><span>${esc(d.text)}${d.q?`<span class="qref">Q${d.q}</span>`:''}${d.own?`<span class="own">${esc(d.own)}</span>`:''}</span></li>`).join('')}</ul></div>`; }).join('');
+  $('dec-list').querySelectorAll('button[data-to]').forEach(b=>b.addEventListener('click',()=>{ showTab('demo'); go(b.dataset.to); }));
+}
 function showTab(t){
-  ['demo','ov','about'].forEach(k=>{ $('view-'+k).hidden = k!==t; $('tab-'+k).setAttribute('aria-selected', k===t?'true':'false'); });
+  ['demo','ov','dec','about'].forEach(k=>{ $('view-'+k).hidden = k!==t; $('tab-'+k).setAttribute('aria-selected', k===t?'true':'false'); });
   try{ localStorage.setItem('pickoo-tab', t); }catch(e){}
   if(t!=='demo') window.scrollTo({top:0});
 }
-$('tab-demo').onclick=()=>showTab('demo'); $('tab-ov').onclick=()=>showTab('ov'); $('tab-about').onclick=()=>showTab('about');
+$('tab-demo').onclick=()=>showTab('demo'); $('tab-ov').onclick=()=>showTab('ov'); $('tab-dec').onclick=()=>showTab('dec'); $('tab-about').onclick=()=>showTab('about');
 $('back').onclick = back;
 function applyMode(){ const [m,label] = MODES[modeIdx]; $('stage').dataset.mode = m; $('toggle').textContent = label; $('toggle').setAttribute('aria-pressed', m!=='none'); try{localStorage.setItem('pickoo-mode', String(modeIdx));}catch(e){} }
 $('toggle').onclick = ()=>{ modeIdx = (modeIdx+1) % MODES.length; applyMode(); };
 document.addEventListener('keydown', e=>{ if(e.target.closest('input,textarea')) return; if(e.key==='ArrowLeft'){ back(); } if(e.key==='Escape'){ showTab('demo'); go('home'); } });
 window.addEventListener('hashchange', ()=>{ const k = location.hash.replace('#',''); if(k && k!==current && SCREENS[k]){ showTab('demo'); go(k); } });
 
-buildTree(); buildOverview();
+buildTree(); buildOverview(); buildDecisions();
 try{ const m = parseInt(localStorage.getItem('pickoo-mode')); if(!isNaN(m) && m>=0 && m<MODES.length) modeIdx = m; }catch(e){}
 applyMode();
 const startKey = location.hash.replace('#',''); go(SCREENS[startKey] ? startKey : 'home', false);
