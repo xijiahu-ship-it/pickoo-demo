@@ -108,6 +108,15 @@ a{color:var(--accent-ink)}
 .qstrip button[aria-expanded="true"]{background:var(--q);color:#fff}
 .qstrip button.mt{border-color:var(--mt);background:var(--mt-soft)}
 .qstrip button.mt[aria-expanded="true"]{background:var(--mt);color:#fff}
+.mtag.ok{background:var(--ok)}
+.qstrip button.dn{border-color:var(--ok);background:rgba(29,143,91,.08)}
+.qstrip button.dn[aria-expanded="true"]{background:var(--ok);color:#fff}
+.qdetail.dn{border-color:var(--ok);background:rgba(29,143,91,.08)}
+.qdetail.dn .qn{color:var(--ok)}
+/* carried query bubble drawn over the chat screenshot */
+.carry{position:absolute;z-index:1;display:flex;flex-direction:column;align-items:flex-end;gap:2px;background:#fff;pointer-events:none;container-type:inline-size;overflow:visible}
+.carry .bub{display:inline-block;max-width:100%;background:#FBE4FB;color:#8E0E8E;border-radius:999px;padding:.55em 1em;font-size:clamp(9px,2.9cqw,16px);font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.carry .from{font-size:clamp(8px,2cqw,11px);color:#C918C9;font-weight:700;white-space:nowrap}
 .mtag{font-style:normal;font-size:10px;font-weight:800;background:var(--mt);color:#fff;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle;white-space:nowrap}
 .qstrip button[aria-expanded="true"] .mtag{background:#fff;color:var(--mt)}
 .qdetail.mt{border-color:var(--mt);background:var(--mt-soft)}
@@ -333,12 +342,13 @@ const homeCards = () => [
   H(973,440,354,236,'Shop Within Budget 卡片 → 预算购物弹窗','bd-popup'),
   H(1352,440,356,236,'Find Shopping Ideas 卡片 → 送礼灵感弹窗','id-popup'),
 ];
+const CHIP_Q = ['Which everyday tote fits my work essentials?','How can I make my bedroom feel more restful?','Which light layer works for cooler weekends?','Which sofa fits my living room layout?','Which sofa fits my living room layout?'];
 const homeChips = (to) => [
-  H(320,278,405,44,'推荐问题 chip → 带着问题唤起 Agent',to),
-  H(747,278,422,44,'推荐问题 chip',to),
-  H(1186,278,410,44,'推荐问题 chip',to),
-  H(601,342,344,44,'推荐问题 chip',to),
-  H(966,342,357,44,'推荐问题 chip',to),
+  H(320,278,405,44,'推荐 query 1 → 带着这句话唤起 Agent（5 条统一承接）',to,{carry:CHIP_Q[0]}),
+  H(747,278,422,44,'推荐 query 2 → 带着这句话唤起 Agent',to,{carry:CHIP_Q[1]}),
+  H(1186,278,410,44,'推荐 query 3 → 带着这句话唤起 Agent',to,{carry:CHIP_Q[2]}),
+  H(601,342,344,44,'推荐 query 4 → 带着这句话唤起 Agent',to,{carry:CHIP_Q[3]}),
+  H(966,342,357,44,'推荐 query 5 → 带着这句话唤起 Agent（设计稿里与第 4 条重复）',to,{carry:CHIP_Q[4]}),
 ];
 const topDeals = (to) => [
   H(79,851,284,229,'Top deals 商品卡 → 商品详情（推断）',to),
@@ -359,9 +369,9 @@ const SECTIONS = [
      H(110,2240,1660,460,'Carry On 横滑商品卡 → 商品详情','pdp-panel'),
      EXT(79,2840,1760,180,'Big Savings · Claim Now','领券跳商家站（站外，推断）'),
      H(79,3180,1760,2300,'Deals for You 商品流卡片 → 商品详情','pdp-panel'), NOTE(79,3100,1760,60,'Deals for You 筛选 chip','切换排序 / 品类，当前页刷新')]},
-  {key:'home-chat', node:'707-28288', fname:'点击唤起chat', name:'首页 · 唤起 Okiee Agent 侧栏',
-   desc:'输入框 / chip / Chat 导航触发。右侧 640 宽侧栏，顶部有「展开全屏」和「关闭」；结果里的商品卡点开商品详情侧栏。',
-   hot:[...hdr(false), ...panel('home-full','home',null), H(1290,311,577,450,'结果商品卡 → 商品详情侧栏（推断）','pdp-panel'), ...homeCards()]},
+  {key:'home-chat', node:'707-28288', fname:'点击唤起chat', name:'首页 · 唤起 Okiee Agent 侧栏', bubble:{x:1270,y:150,w:606,h:50},
+   desc:'输入框 / 5 条推荐 query / Chat 导航触发，统一进同一个侧栏：右上角显示用户点的那句话，下面是一句话结论 + 商品卡。从首页点不同 query 进来，这里会显示对应文案。',
+   hot:[...hdr(false), ...panel('home-full','home',null), NOTE(1270,150,606,50,'用户消息气泡','显示从首页带进来的 query，5 条统一'), H(1290,311,577,450,'结果商品卡 → 商品详情侧栏（推断）','pdp-panel'), ...homeCards()]},
   {key:'home-full', node:'707-27778', fname:'展开全屏', name:'首页 · Agent 全屏态',
    desc:'侧栏点「展开」后铺满内容区，顶栏保留。收起回侧栏，关闭回首页。',
    hot:[...hdr(false), ...fullChrome('home-chat','home'), H(320,354,1280,395,'结果商品卡 → 全屏商品详情','pdp-full'), NOTE(561,951,798,108,'追问输入框','全屏内继续对话')]},
@@ -552,8 +562,8 @@ const QUESTIONS = [
  {n:5, area:'Shop the whole list', text:'点击后跳转到 chat 的页面样式是什么样', owner:'产品', screens:['home-long','home-chat']},
  {n:6, area:'整页跳转', text:'整个页面的跳转流程再梳理一下，哪些跳转至 chat 后需要不同的承接，具体承接的会话和展示内容', owner:'产品 · 设计', screens:['home','cp-popup-link','tp-popup','bd-popup-sel','id-popup-sel','pdp-full','at-add-menu']},
  {n:7, area:'最上面 4 个能力卡', text:'每个能力卡内对应的具体信息', owner:'产品 · 设计', screens:['home','cp-popup','tp-popup','bd-popup','id-popup']},
- {n:8, area:'顶部 5 个推荐 query', text:'点击后进入 chat 的承接样式需要保持一致', owner:'产品', meeting:true, screens:['home','home-chat'],
-  gap:'交互稿只出了一帧「点击唤起chat」（Coco Croissant Bag 的回复），没有分别给 5 个 query 的承接；5 条 query 里第 4、5 条还是同一句话。需要明确：统一承接模板是什么，回复里是否都带商品卡。'},
+ {n:8, area:'顶部 5 个推荐 query', text:'点击后进入 chat 的承接保持一致', owner:'产品', done:true, screens:['home','home-chat'],
+  gap:'demo 已按此改：5 条 query 都进同一个 Agent 侧栏，用户消息气泡显示所点的那句 query，下面统一是「一句话结论 + 商品卡」。回到首页换一条 query 点，可以看到气泡文案跟着变。遗留：设计稿里第 4、5 条 query 文案重复，待设计替换。'},
  {n:9, area:'单商品卡', text:'点击后进入 PDP，还可以进入 chat 吗', owner:'产品', meeting:true, screens:['home','pdp-panel','pdp-full'],
   gap:'交互稿里商品卡 → PDP 侧栏没有连线，是按惯例推断的。全屏 PDP 有 Ask Okiee 和 Track price / Is this a good price? / Compare with another 三个入口进 chat；PDP 侧栏态没有任何进 chat 的入口。需要明确：侧栏态要不要加 chat 入口，卡片上要不要直接给「问 Okiee」。'},
  {n:10, area:'4 个能力卡弹窗', text:'哪些是必选项、哪些可以不选，是否支持多选', owner:'产品', meeting:true, screens:['cp-popup','tp-popup','bd-popup','id-popup'],
@@ -580,7 +590,7 @@ ORDER.forEach(k => {
     if ((k==='home'||k==='home-logged'||k==='home-long') && L.includes('卡片 →')) q.add(7);
     if (['cp-popup','tp-popup','bd-popup','id-popup'].includes(k) && !h.under && !L.startsWith('✕') && !/^(Logo|Explore|Chat|Auto-task|Favorites|Add Okiee|Log in)/.test(L)) q.add(7);
     if ((k==='home'||k==='home-logged'||k==='home-long') && L.includes('推荐问题 chip')) q.add(8);
-    if (k==='home-chat' && (L.startsWith('结果商品卡') || L.startsWith('追问') )) q.add(8);
+    if (k==='home-chat' && L.startsWith('用户消息')) q.add(8);
     if ((k==='home'||k==='home-logged') && (L.startsWith('Top deals') || (L.includes('商品卡') && h.y===851))) q.add(9);
     if (k==='pdp-panel' && !h.under && !/^(Logo|Explore|Chat|Auto-task|Favorites|Add Okiee|Log in)/.test(L)) q.add(9);
     if (k==='pdp-full' && (L.startsWith('Ask Okiee') || L.startsWith('Track price') || L.startsWith('Is this') || L.startsWith('Compare with'))) q.add(9);
@@ -591,7 +601,7 @@ ORDER.forEach(k => {
   });
 });
 const MODES = [['none','热区已隐藏'],['q','只看待确认'],['all','全部热区']];
-let modeIdx = 0;
+let modeIdx = 0; let pendingCarry = null;
 
 // ---------- state ----------
 let current = null; const hist = [];
@@ -617,7 +627,7 @@ function render(){
   $('meta').innerHTML = `<span>图层名 <code>${esc(sc.fname)}</code></span><span>尺寸 <code>${W}×${Hh}</code></span>${sc.tag?`<span class="tag">${esc(sc.tag)}</span>`:''}`;
   $('qdetail').hidden = true; $('stage').dataset.focus = '';
   $('qstrip').innerHTML = qsHere.length
-    ? `<span class="lead">本页待确认</span>` + qsHere.map(n=>{ const q=QUESTIONS[n-1]; return `<button type="button" class="${q.meeting?'mt':''}" data-q="${n}" aria-expanded="false" title="点开看全文，并在图上高亮相关位置"><span class="qmark">Q${n}</span>${esc(q.area)} · ${esc(q.text.length>22?q.text.slice(0,22)+'…':q.text)}${q.meeting?'<i class="mtag">开会明确</i>':''}</button>`; }).join('')
+    ? `<span class="lead">本页待确认</span>` + qsHere.map(n=>{ const q=QUESTIONS[n-1]; return `<button type="button" class="${q.meeting?'mt':''}${q.done?' dn':''}" data-q="${n}" aria-expanded="false" title="点开看全文，并在图上高亮相关位置"><span class="qmark">Q${n}</span>${esc(q.area)} · ${esc(q.text.length>22?q.text.slice(0,22)+'…':q.text)}${q.meeting?'<i class="mtag">开会明确</i>':''}${q.done?'<i class="mtag ok">demo 已改</i>':''}</button>`; }).join('')
     : `<span class="none">本页没有待确认项。悬停页面任意位置可看跳转去向，右上角可打开热区框线。</span>`;
   $('qstrip').querySelectorAll('button[data-q]').forEach(b=>b.addEventListener('click',()=>showQDetail(b)));
   renderComments();
@@ -637,9 +647,17 @@ function render(){
     const target = h.to ? SCREENS[h.to] : null;
     b.innerHTML = `${h.q?`<i class="qb">${h.q.map(n=>'Q'+n).join(' ')}</i>`:''}<span class="lbl">${h.q?`<b style="color:var(--q)">${h.q.map(n=>'Q'+n).join(' ')}</b> `:''}${esc(h.label)}${target?`<br><span style="opacity:.75">→ ${esc(target.name)}</span>`:''}${h.note?`<br><span style="opacity:.75">${esc(h.note)}</span>`:''}</span>`;
     b.setAttribute('aria-label', h.label + (target?' → '+target.name:''));
-    b.addEventListener('click', ev=>{ ev.stopPropagation(); if(h.to) go(h.to); else if(h.ext) toastMsg('外链：' + (h.note||h.label)); else toastMsg(h.note||h.label); });
+    b.addEventListener('click', ev=>{ ev.stopPropagation(); if(h.to){ pendingCarry = h.carry || null; go(h.to); } else if(h.ext) toastMsg('外链：' + (h.note||h.label)); else toastMsg(h.note||h.label); });
     stage.appendChild(b);
   });
+  stage.querySelectorAll('.carry').forEach(e=>e.remove());
+  if(pendingCarry && sc.bubble){
+    const bb = sc.bubble; const c = document.createElement('div'); c.className='carry';
+    c.style.left=(bb.x/W*100)+'%'; c.style.top=(bb.y/Hh*100)+'%'; c.style.width=(bb.w/W*100)+'%'; c.style.height=(bb.h/Hh*100)+'%';
+    c.innerHTML = `<span class="bub">${esc(pendingCarry)}</span><span class="from">↑ 来自首页推荐 query</span>`;
+    stage.appendChild(c);
+  }
+  pendingCarry = null;
   stage.classList.remove('flash'); void stage.offsetWidth; stage.classList.add('flash');
   // links table
   const rows = sc.hot.filter(h=>!h.under).map(h=>{
@@ -667,8 +685,8 @@ function showQDetail(btn){
   btn.setAttribute('aria-expanded','true');
   hots.forEach(h=>{ const on = h.dataset.qs.includes(','+n+','); h.classList.toggle('focus', on); const qb=h.querySelector('.qb'); if(qb) qb.textContent = on ? 'Q'+n : qb.textContent; if(!on) resetBadge(h); });
   $('stage').dataset.focus = n;
-  d.className = 'qdetail' + (q.meeting?' mt':'');
-  d.innerHTML = `<span class="qn">Q${q.n}</span><div><div class="qt"><span class="area">${esc(q.area)}</span>${esc(q.text)}${q.meeting?'<i class="mtag">交互稿无答案 · 开会明确</i>':''}</div>${q.gap?`<div class="gap">${esc(q.gap)}</div>`:''}<div class="qo">负责：${esc(q.owner)} · 相关页面：</div><div class="qs">${q.screens.map(k=>`<button type="button" data-to="${k}" aria-current="${k===current?'page':'false'}">${esc(SCREENS[k].name)}</button>`).join('')}</div><div class="qo" style="margin-top:6px">图上红框 = 这条问题涉及的位置；再点一次顶部标签取消高亮。</div></div>`;
+  d.className = 'qdetail' + (q.meeting?' mt':'') + (q.done?' dn':'');
+  d.innerHTML = `<span class="qn">Q${q.n}</span><div><div class="qt"><span class="area">${esc(q.area)}</span>${esc(q.text)}${q.meeting?'<i class="mtag">交互稿无答案 · 开会明确</i>':''}${q.done?'<i class="mtag ok">已在 demo 里实现</i>':''}</div>${q.gap?`<div class="gap">${esc(q.gap)}</div>`:''}<div class="qo">负责：${esc(q.owner)} · 相关页面：</div><div class="qs">${q.screens.map(k=>`<button type="button" data-to="${k}" aria-current="${k===current?'page':'false'}">${esc(SCREENS[k].name)}</button>`).join('')}</div><div class="qo" style="margin-top:6px">图上红框 = 这条问题涉及的位置；再点一次顶部标签取消高亮。</div></div>`;
   d.querySelectorAll('button[data-to]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.to)));
   d.hidden = false;
 }
