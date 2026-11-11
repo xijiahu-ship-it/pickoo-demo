@@ -445,7 +445,6 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
   $$('#l-demo .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
   $('#l-season-now').innerHTML = TP.filter(t => t.type === '时令专题' && inWindow(t)).map(t => `<b>${esc(t.zh)}</b>`).join('、');
   const nOn = TP.reduce((s, t) => s + t.cards.filter(c => c.on).length, 0);
-  $('#l-cardn').textContent = nOn;
   const byType = {}; TP.forEach(t => (byType[t.type] = byType[t.type] || []).push(t));
   $('#l-kpis').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="kpi"><div class="v"><span class="badge ${TYPE_CLS[tp]}" style="font-size:14px;padding:3px 10px;vertical-align:2px">${tp}</span> ${fmt(byType[tp].reduce((s, t) => s + t.pool, 0))} CSPU</div><div class="l">${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张话题卡</div></div>`).join('') + `<div class="kpi"><div class="v">${fmt(TP.reduce((s, t) => s + t.pool, 0))}</div><div class="l">候选池 CSPU 合计（未跨话题去重）</div></div>`;
   const picked = new Set(out.map(x => x.c.t));
