@@ -325,11 +325,11 @@ table.t tr.hl td{background:#fffbe6}
 <div class="view" id="v-feed">
   <div class="blk">
     <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Deals for You · 场景多选 · Discount 排序 · 点卡进商品详情</span></h2>
-    <p class="lead">Best Price 的承接：不用输入就能看好价。Filter 本期只有两个：<b>场景（可多选）</b>和 <b>Discount %</b>（替换原 Price / Sold，hover 有解释）。卡片 = 图 + 名称 + ✦ 推荐理由（可核对的省钱点 + 使用场景）+ 现价/划线价 + 来源站。</p>
+    <p class="lead">Best Price 的承接：不用输入就能看好价。推荐以 CSPU 为粒度。Filter 本期只有两个：<b>场景（可多选）</b>和 <b>Discount %</b>（替换原 Price / Sold，hover 有解释）。卡片 = 图 + 名称 + ✦ 推荐理由（可核对的省钱点 + 使用场景）+ 现价/划线价 + 来源站。</p>
     <div class="pri" style="margin:0 0 14px">
-      <div class="p"><div class="k"><span class="n">1</span>先圈候选：时节 + 热门 + 有折扣</div><div class="d">场景叶子类目圈定 ∩ <b>符合时节、热门品</b>（供给圈选）∩ <b>近 30 天有降价</b>。当前时节主推：感恩节 / 黑五 / 网一（食材清单、全品类大促、礼物）。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>排序 = 相关性 × 降价幅度</div><div class="d">冷启动先问 3 个轻量问题（家庭人数、孩子/宠物、会员），相关性按场景叶子均等；有行为后按点击和 profile 加权。用户可切 Discount ↓ 按近 30 天降幅排。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>按叶子类目打散</div><div class="d">每屏每个叶子 ≤ 4 个、同叶子不连续超过 2 个，避免一屏全是床单。喜欢 / 不喜欢 / 筛选后下一屏要有可感知变化。</div></div>
+      <div class="p"><div class="k"><span class="n">1</span>准入池：质量底线 + 站点配额，不要求降价</div><div class="d">T-1 日更。<b>质量底线</b>：信息完整度 ≥ 4 / 6 项（标题、描述、规格、属性、卖点、图 ≥ 3）、评论 ≥ 5 条且评分 ≥ 4.0、类目黑名单剔除；<b>站点</b>：单一零售商 ≤ 20%。池子按 16 个场景的叶子类目切片，每场景 ≥ 5,000 才生效。降价和热门不做准入条件，放到排序里加分。</div></div>
+      <div class="p"><div class="k"><span class="n">2</span>排序：降幅 + 热度，非冷启动再加个人相关性</div><div class="d"><b>冷启动</b> score = 0.55 × 降幅 + 0.45 × 热度；<b>非冷启动</b> = 0.35 × 降幅 + 0.25 × 热度 + 0.40 × 个人相关性（系数为 v1 起始值）。<b>降幅</b>按 30 天降幅四档 0 / 0.3 / 0.6 / 0.9，7 天内新降 +0.1，超过上限或无历史价记 0；<b>热度</b> = 评论数叶子内四档（最高 0.6）+ 评论增量前 30%（+0.15）+ Amazon 榜单（+0.15）+ 当季时令类目（+0.1，仅 default）；<b>个人相关性</b>：chat 透露 0.6 &gt; 喜欢 / 收藏 / 盯价 0.5 &gt; 点商品 0.3 &gt; 推荐 query chip 0.1，上限 1。选场景 chip 只做过滤，不算信号；切 Discount ↓ 只按降幅。</div></div>
+      <div class="p"><div class="k"><span class="n">3</span>打散与轮换</div><div class="d">叶子类目每屏 ≤ 4、不连续超过 2；同一零售商每屏 ≤ 1/3；价格带低 / 中 / 高每屏各 ≥ 1/4；曝光未点击下次降权 × 0.5、连续 3 次移出当日池；同款多规格、多站按 CSPU 去重展示最低价站。</div></div>
     </div>
 <div class="canvas">
       <h3 class="mh">Deals for You</h3>
@@ -345,7 +345,7 @@ table.t tr.hl td{background:#fffbe6}
     <p class="lead"><span id="f-kpitxt"></span>。灰色 = 一期不上 / 待新增。</p>
     <div class="pri" style="margin-bottom:14px">
       <div class="p"><div class="k"><span class="n">1</span>标签如何选：先分级，一期只上「强 + 中」</div><div class="d">按<b>北美市场规模</b>（NRF / APPA / Circana 等）和<b>竞品是否设频道</b>（Target、DealNews、Slickdeals）打分。<b>强</b> = 有权威规模数据或 ≥2 家竞品有频道；<b>中</b> = 两者只占一项；<b>弱</b> = 都缺。召回池还要 &gt; 3 万 CSPU。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>每个标签如何圈品，作为召回池</div><div class="d">标签 = <b>GPC 叶子类目</b>（多数取 Top10）+ 规则，三种：<b>只用类目</b>（12 个）、<b>类目 + 细分词</b>（运动袜 athletic）、<b>类目 + 标题场景词 ± 排除词</b>（圣诞词、排除其他节日）。圈出的即召回池（表中 CSPU），&lt; 5,000 不生效；每日再按热门 / 降价 / 质量筛出 feed。</div></div>
+      <div class="p"><div class="k"><span class="n">2</span>每个标签如何圈品，作为召回池</div><div class="d">标签 = <b>GPC 叶子类目</b>（多数取 Top10）+ 规则，三种：<b>只用类目</b>（12 个）、<b>类目 + 细分词</b>（运动袜 athletic）、<b>类目 + 标题场景词 ± 排除词</b>（圣诞词、排除其他节日）。圈出的即召回池（表中 CSPU），&lt; 5,000 不生效；不要求降价，降幅和热度在排序阶段打分。</div></div>
       <div class="p"><div class="k"><span class="n">3</span>排序与上下线：Feed_Rank + 时令周期</div><div class="d">chip 按 <b>Feed_Rank</b> 排；<b>时令标签不限 1 个</b>，周期内的都出、排最前，到期下线。sheet 目前只配了圣诞；7 个时令都配上的话同时最多 2 个（感恩节 + 冬季保暖、圣诞 + 冬季保暖、夏季出游 + 返校）。</div></div>
     </div>
     <table class="t" id="f-scene-table"></table>
@@ -510,7 +510,7 @@ function buildFeed(leaves, cap, run, n){
 }
 function renderFeed(){
   const live = FS.filter(f => f.live);
-  $('#f-chips').innerHTML = `<span class="chip sort ${sortMode === 'rel' ? 'on' : ''}" data-s="rel">Default<span class="tip">相关性 × 近 30 天降价幅度，按叶子类目打散</span></span><span class="chip sort ${sortMode === 'disc' ? 'on' : ''}" data-s="disc">Discount ↓<span class="tip">按近 30 天降价幅度从大到小</span></span><span class="vsep"></span>` +
+  $('#f-chips').innerHTML = `<span class="chip sort ${sortMode === 'rel' ? 'on' : ''}" data-s="rel">Default<span class="tip">降幅 + 热度（非冷启动再加个人相关性），按叶子类目 / 站点 / 价格带打散</span></span><span class="chip sort ${sortMode === 'disc' ? 'on' : ''}" data-s="disc">Discount ↓<span class="tip">按近 30 天降价幅度从大到小</span></span><span class="vsep"></span>` +
     `<span class="chip ${selScenes.size ? '' : 'on'}" data-k="">✦ All finds</span>` + live.map(f => `<span class="chip ${selScenes.has(f.id) ? 'on' : ''}" data-k="${f.id}"><span class="em">${EMO[f.id]}</span>${esc(f.en)}${f.season ? ' <small style="opacity:.7">时令</small>' : ''}<span class="tip">${esc(f.zh)}${f.season ? ' · 时令周期 ' + f.win[0] + ' ~ ' + f.win[1] : ' · Feed_Rank ' + f.rank} · 可多选</span></span>`).join('');
   $$('#f-chips .chip.sort').forEach(c => c.onclick = () => { sortMode = c.dataset.s; feedPages = 1; renderFeed(); });
   $$('#f-chips .chip:not(.sort)').forEach(c => c.onclick = () => { const k = c.dataset.k; if (!k) selScenes.clear(); else selScenes.has(k) ? selScenes.delete(k) : selScenes.add(k); feedPages = 1; renderFeed(); });
