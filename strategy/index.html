@@ -307,7 +307,7 @@ table.t tr.hl td{background:#fffbe6}
       <div class="hrow" id="l-demo"></div>
     </div>
     <div class="pri" style="margin-top:14px">
-      <div class="p"><div class="k"><span class="n">1</span>优先级：时令 &gt; 通用 &gt; 大类</div><div class="d">首页从左到右：<b>时令专题（周期内的都出，每个时令 1 张）+ 通用品类 3 张 + 大类场景 2 张</b>。时令不限 1 张，<b>凡在当前日期的时令周期内的都参与</b>（今天：<span id="l-season-now"></span>），周期外的不出；按现有周期同时最多 2 个时令，首页 6–7 张。</div></div>
+      <div class="p"><div class="k"><span class="n">1</span>优先级：时令 &gt; 通用 &gt; 大类</div><div class="d">首页从左到右：<b>时令专题 + 通用品类 3 张 + 大类场景 2 张</b>。时令只出当前日期在周期内的，每个 1 张（今天：<span id="l-season-now"></span>）；按现有周期同时最多 2 个。</div></div>
       <div class="p"><div class="k"><span class="n">2</span>同类内部排序：省得多的在前，没看过的优先</div><div class="d">同一类 Topic 里，按<b>整单节省金额从大到小</b>排（原价合计 − 现价合计；原价 = 每个 CSPU 各站最高价之和，现价 = 各站最低价之和）。<b>每个一级分类最多出 1 张</b>，避免 3 张通用卡都是家居厨房。<b>之前没展示过的话题卡优先</b>：同一分类下 3 张卡轮换曝光，用户看过的往后排。</div></div>
       <div class="p"><div class="k"><span class="n">3</span>有行为后：兴趣优先，时令补位</div><div class="d">用户有点击 / 对话行为后，<b>感兴趣的品类对应的清单优先推荐</b>，其余坑位用时令热门补齐。二期再根据全站热门（US 用户聊天 memory、点击/成交）和个人 memory 更新话题卡和排序。</div></div>
     </div>
@@ -444,7 +444,7 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
   const {groups, out} = pickLists();
   $('#l-demo').innerHTML = out.map(x => listCard(x)).join('');
   $$('#l-demo .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
-  $('#l-season-now').innerHTML = TP.filter(t => t.type === '时令专题' && inWindow(t)).map(t => `<b>${esc(t.zh)}</b>（${t.start} ~ ${t.end}）`).join('、');
+  $('#l-season-now').innerHTML = TP.filter(t => t.type === '时令专题' && inWindow(t)).map(t => `<b>${esc(t.zh)}</b>`).join('、');
   const nOn = TP.reduce((s, t) => s + t.cards.filter(c => c.on).length, 0);
   $('#l-cardn').textContent = nOn;
   const byType = {}; TP.forEach(t => (byType[t.type] = byType[t.type] || []).push(t));
