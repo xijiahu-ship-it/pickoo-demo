@@ -315,7 +315,6 @@ table.t tr.hl td{background:#fffbe6}
 
   <div class="blk">
     <h2><span class="n">2</span>全部清单：有哪些 list、背后供给有多少 <span class="src-tag">供给 sheet「Okiee 圈品 · 1109 collection_config」· US 2026-11-01</span></h2>
-    <p class="lead">三类 Topic → 23 个一级分类 → <span id="l-cardn"></span> 张在线话题卡，全部做成卡片。每个一级分类标了候选池 CSPU 数，<b>点 CSPU 数</b>展开这个分类的选品逻辑；点卡片看清单内容。★ = 今天在首页。灰色「待新增」= 建议新增、待与供给沟通（依据 mshop US 用户 10-07 ~ 11-10 共 509 个 chat session 的需求分布）；「一期不上」= 供给评估后暂不上线的分类（收纳整理、乔迁送礼），标签怎么筛的见单品推荐 tab。</p>
     <div class="kpis" id="l-kpis"></div>
     <div class="toc" id="l-toc"></div>
     <div id="l-gallery"></div>
@@ -448,7 +447,7 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
   const nOn = TP.reduce((s, t) => s + t.cards.filter(c => c.on).length, 0);
   $('#l-cardn').textContent = nOn;
   const byType = {}; TP.forEach(t => (byType[t.type] = byType[t.type] || []).push(t));
-  $('#l-kpis').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="kpi"><div class="v"><span class="badge ${TYPE_CLS[tp]}" style="font-size:14px;padding:3px 10px;vertical-align:2px">${tp}</span> ${fmt(byType[tp].reduce((s, t) => s + t.pool, 0))} CSPU</div><div class="l">${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张话题卡</div></div>`).join('') + `<div class="kpi"><div class="v">${fmt(TP.reduce((s, t) => s + t.pool, 0))}</div><div class="l">候选池 CSPU 合计（未跨话题去重）</div></div><div class="kpi"><div class="v">${TP.reduce((s, t) => s + t.rules.length, 0)}</div><div class="l">圈品规则条数</div></div>`;
+  $('#l-kpis').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="kpi"><div class="v"><span class="badge ${TYPE_CLS[tp]}" style="font-size:14px;padding:3px 10px;vertical-align:2px">${tp}</span> ${fmt(byType[tp].reduce((s, t) => s + t.pool, 0))} CSPU</div><div class="l">${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张话题卡</div></div>`).join('') + `<div class="kpi"><div class="v">${fmt(TP.reduce((s, t) => s + t.pool, 0))}</div><div class="l">候选池 CSPU 合计（未跨话题去重）</div></div>`;
   const picked = new Set(out.map(x => x.c.t));
   const PROPOSED = {
     '时令专题': [['超级碗', '01-25 ~ 02-14', '看球零食、饮料、电视 / 音箱、球队周边'], ['情人节', '01-25 ~ 02-14', '礼物、巧克力、香氛、约会穿搭'], ['复活节', '03-10 ~ 03-28', '儿童篮子、糖果、春季餐桌'], ['母亲节 / 父亲节', '节前 3 周', '礼物清单'], ['毕业季', '05-01 ~ 06-15', '毕业礼物、宿舍搬家']],
