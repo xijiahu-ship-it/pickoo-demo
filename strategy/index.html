@@ -261,6 +261,12 @@ table.t tr.hl td{background:#fffbe6}
 .gcard{flex:none;width:236px;scroll-snap-align:start}
 .gcard .cap{font-size:12px;margin:8px 2px 6px;line-height:1.5;color:#555}
 .gcard .cap b{display:block;color:var(--ink)}
+.addl{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+.addl h3{font-size:14px;margin:0 0 6px;display:flex;align-items:center;gap:8px}
+.addl-g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.addl-g>div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:12.5px}
+.addl-g ul{margin:6px 0 0;padding-left:18px}.addl-g li{margin:3px 0;line-height:1.5}
+#f-scene-table tr[hidden]{display:none}
 .gt h3{font-size:14px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
 .gc{border:1px solid var(--line);border-radius:12px;padding:10px 12px 4px;margin-bottom:10px;background:#fff}
 
@@ -311,6 +317,15 @@ table.t tr.hl td{background:#fffbe6}
     <div class="kpis" id="l-kpis"></div>
     <div class="toc" id="l-toc"></div>
     <div id="l-gallery"></div>
+    <div class="addl">
+      <h3>额外新增与供给沟通 <span class="badge off">建议 · 待确认</span></h3>
+      <p class="note" style="margin:0 0 8px">依据：mshop US 用户 10-07 ~ 11-10 共 509 个 chat session 的需求分布（穿搭 21%、数码 20%、家居 8%；家电 / 球队周边 / 保健品有需求但无分类；圣诞树需求 10 月中已出现）。</p>
+      <div class="addl-g">
+        <div><b><span class="badge season">时令专题</span> 新增 5 个</b><ul><li>超级碗（01-25 ~ 02-14）：看球零食、饮料、电视 / 音箱、球队周边</li><li>情人节（01-25 ~ 02-14）：礼物、巧克力、香氛、约会穿搭</li><li>复活节（03-10 ~ 03-28）：儿童篮子、糖果、春季餐桌</li><li>母亲节 / 父亲节（节前 3 周）：礼物清单</li><li>毕业季（05-01 ~ 06-15）：毕业礼物、宿舍搬家</li></ul><div class="note">圣诞时令周期建议提前到 11-01；促销节点（黑五 / 网一、Prime Day、总统日、纪念日 / 独立日、劳动节）不做清单，放 Top deals 当时段标签。</div></div>
+        <div><b><span class="badge gen">通用品类</span> 新增 5 个</b><ul><li>家电：空调、暖风机、空气炸锅、吸尘器（PRD 与供给都没有）</li><li>健康保健：补剂、护具、眼镜</li><li>珠宝配饰：供给已圈 1,639,628 CSPU，待确认</li><li>球队 / 粉丝周边：球衣、影视周边；GPC 无专门叶子，需标题词圈</li><li>家装园艺：工具、草坪、户外家具</li></ul></div>
+        <div><b><span class="badge scene">大类场景</span> 不加分类，先扩卡</b><ul><li>穿搭鞋包、数码电子各只有 3 张卡，需求占四成，优先扩到 6 张以上</li><li>聚会招待下加「Backyard Cookout」承接夏季烧烤 / 国庆聚会</li></ul></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -319,24 +334,38 @@ table.t tr.hl td{background:#fffbe6}
   <div class="blk">
     <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Deals for You · 场景多选 · Discount 排序 · 点卡进商品详情</span></h2>
     <p class="lead">Best Price 的承接：不用输入就能看好价。Filter 本期只有两个：<b>场景（可多选）</b>和 <b>Discount %</b>（替换原 Price / Sold，hover 有解释）。卡片 = 图 + 名称 + ✦ 推荐理由（可核对的省钱点 + 使用场景）+ 现价/划线价 + 来源站。</p>
-    <div class="canvas">
+    <div class="pri" style="margin:0 0 14px">
+      <div class="p"><div class="k"><span class="n">1</span>先圈候选：时节 + 热门 + 有折扣</div><div class="d">场景叶子类目圈定 ∩ <b>符合时节、热门品</b>（供给圈选）∩ <b>近 30 天有降价</b>。当前时节主推：感恩节 / 黑五 / 网一（食材清单、全品类大促、礼物）。</div></div>
+      <div class="p"><div class="k"><span class="n">2</span>排序 = 相关性 × 降价幅度</div><div class="d">冷启动先问 3 个轻量问题（家庭人数、孩子/宠物、会员），相关性按场景叶子均等；有行为后按点击和 profile 加权。用户可切 Discount ↓ 按近 30 天降幅排。</div></div>
+      <div class="p"><div class="k"><span class="n">3</span>按叶子类目打散</div><div class="d">每屏每个叶子 ≤ 4 个、同叶子不连续超过 2 个，避免一屏全是床单。喜欢 / 不喜欢 / 筛选后下一屏要有可感知变化。</div></div>
+    </div>
+<div class="canvas">
       <h3 class="mh">Deals for You</h3>
       <div class="ms">Picked for the way you shop. Prices checked across stores.</div>
       <div class="chips" id="f-chips"></div>
       <div class="grid4" id="f-grid"></div>
       <button class="more" id="f-more">Load more</button>
     </div>
-    <div class="pri" style="margin-top:14px">
-      <div class="p"><div class="k"><span class="n">1</span>先圈候选：时节 + 热门 + 有折扣</div><div class="d">场景叶子类目圈定 ∩ <b>符合时节、热门品</b>（供给圈选）∩ <b>近 30 天有降价</b>。当前时节主推：感恩节 / 黑五 / 网一（食材清单、全品类大促、礼物）。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>排序 = 相关性 × 降价幅度</div><div class="d">冷启动先问 3 个轻量问题（家庭人数、孩子/宠物、会员），相关性按场景叶子均等；有行为后按点击和 profile 加权。用户可切 Discount ↓ 按近 30 天降幅排。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>按叶子类目打散</div><div class="d">每屏每个叶子 ≤ 4 个、同叶子不连续超过 2 个，避免一屏全是床单。喜欢 / 不喜欢 / 筛选后下一屏要有可感知变化。</div></div>
-    </div>
-  </div>
+      </div>
 
   <div class="blk">
-    <h2><span class="n">2</span>场景分类与供给 <span class="src-tag">PRD 3.4 场景枚举 · 供给场景筛选</span></h2>
-    <p class="lead"><span id="f-kpitxt"></span>。每个场景挂 10 个叶子类目，叶子对应二级任务。虚线 = 建议新增、待确认。</p>
-    <div class="sup" id="f-sup"></div>
+    <h2><span class="n">2</span>场景分类与供给 <span class="src-tag">PRD 3.4 场景枚举 · 供给 feed scene 筛选</span></h2>
+    <p class="lead"><span id="f-kpitxt"></span>。</p>
+    <div class="pri" style="margin-bottom:14px">
+      <div class="p"><div class="k"><span class="n">1</span>场景 → 二级任务 → 叶子类目</div><div class="d">PRD 按使用场景聚类出 17 个场景，每个场景下列二级任务（如 Home Refresh → 卧室布置 / 客厅照明 / 小空间）。供给按二级任务挑 GPC 叶子类目，<b>每个场景 10 个叶子</b>。</div></div>
+      <div class="p"><div class="k"><span class="n">2</span>叶子内只用类目圈定</div><div class="d">场景筛选<b>只用叶子类目圈定</b>，不加标题词或属性条件（送礼灵感除外，按礼物词圈）。叶子类目里全部有效 CSPU 都进该场景候选池，所以池子大；噪音靠后续的热门 / 折扣 / 质量过滤。</div></div>
+      <div class="p"><div class="k"><span class="n">3</span>叶子按商品量加权，打散出 feed</div><div class="d">同一场景内各叶子按 √商品量分配配额轮转，每屏每叶 ≤ 4、同叶不连续 &gt; 2；叶子内按降价幅度排。供给备注：鱼饵、泡沫轴这类按量占比过大或太专业的叶子已剔除；童书、雨刷等没有独立叶子的要靠标题词补。</div></div>
+    </div>
+    <table class="t" id="f-scene-table"></table>
+    <p class="note">表中 CSPU 为该场景 10 个叶子的商品量合计（未去重）；点场景行可展开它的叶子类目与二级任务。</p>
+    <div class="addl">
+      <h3>额外新增与供给沟通 <span class="badge off">建议 · 待确认</span></h3>
+      <div class="addl-g">
+        <div><b>供给已圈、待确认（5）</b><ul><li>Personal Care、Makeup、Fashion Accessories、Fragrance、Trendy Toys</li><li>和 Beauty Routines / Outfit Ideas 有重叠，拆法待定</li></ul></div>
+        <div><b>建议新增（5）</b><ul><li>Tech &amp; Gadgets：相机、VR、游戏机、太阳能等；线上 20% 需求，现有标签只盖到办公桌和观影</li><li>Home Appliances：空调、暖风机、空气炸锅</li><li>Health &amp; Wellness：补剂、护具、眼镜</li><li>Fan Gear：球队 / 影视周边，需标题词圈</li><li>Garden &amp; Outdoor Living：园艺、户外家具、烧烤</li></ul></div>
+        <div><b>PRD 有、供给未单独圈（2）</b><ul><li>Seasonal Picks：按 PRD 是聚合入口，复用时令专题，不需单独供给</li><li>Gift Ideas：供给按送礼规则圈了 43,222 CSPU，可直接挂为场景</li></ul></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -345,17 +374,17 @@ table.t tr.hl td{background:#fffbe6}
   <div class="blk">
     <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Top deals of the day · 横滑 · 点卡进商品详情（带 Ask Pickoo）</span></h2>
     <p class="lead">绿色卡 = 盯价命中，标签 <b>Hit your target price!</b>；红边 ♥ 卡 = 用户喜欢过的商品降价；其余 = 运营高质量低价池，标签 at a 30-day low / 30 days Lowest!。折扣 =（划线价 − 现价）/ 划线价。</p>
-    <div class="canvas">
-      <h3 class="mh">Top deals of the day</h3>
-      <div class="ms">Checked today across the stores you shop.</div>
-      <div class="hrow" id="d-demo"></div>
-    </div>
-    <div class="pri" style="margin-top:14px">
+    <div class="pri" style="margin:0 0 14px">
       <div class="p"><div class="k"><span class="n">1</span>盯价命中，放第 1 坑</div><div class="d">用户设过 price drop 且已达成的商品。<b>连续展示 3 次不点击</b>就收进 Auto-task 二级页，同时走 email + agent 内提示。</div></div>
       <div class="p"><div class="k"><span class="n">2</span>喜欢过的商品降价</div><div class="d">用户 ♡ 过的商品出现降价，用带 ♥ 的样式单独标出。</div></div>
       <div class="p"><div class="k"><span class="n">3</span>运营好价池，按降幅倒排</div><div class="d">热门/时节 ∩ 高质量 ∩ 近 30 天降幅 &gt; 5%，按降幅从大到小；非冷启动再叠加用户点击和 profile 相关性。<b>Daily 更新</b>。横滑上限由前端定。</div></div>
     </div>
-  </div>
+<div class="canvas">
+      <h3 class="mh">Top deals of the day</h3>
+      <div class="ms">Checked today across the stores you shop.</div>
+      <div class="hrow" id="d-demo"></div>
+    </div>
+      </div>
 
   <div class="blk">
     <h2><span class="n">2</span>供给：池子怎么来 <span class="src-tag">PRD 3.2 price drop 供给筛选维度</span></h2>
@@ -363,7 +392,7 @@ table.t tr.hl td{background:#fffbe6}
       <div class="box"><div class="h">① 热门 / 时节</div><div class="d">热门 = 供给爬的 Amazon 榜单 + N 天内 review 涨幅高；时节 = 当季主推方向</div></div><div class="arr">∩</div>
       <div class="box"><div class="h">② 高质量</div><div class="d">review 数 / view 数达到阈值（阈值和供给确定）</div></div><div class="arr">∩</div>
       <div class="box"><div class="h">③ 近 30 天降价 &gt; 5%</div><div class="d">同款 CSPU 近 x 天降幅 + 非同款（叶子类目内）近 x 天降幅</div></div><div class="arr">→</div>
-      <div class="box"><div class="h">④ 每日池</div><div class="d">按降幅倒排，取前 N 张</div><div class="v" id="d-n"></div></div>
+      <div class="box"><div class="h">④ 每日池</div><div class="d">按降幅倒排，取前 N 张，N 由前端定；Daily 更新</div></div>
     </div>
     <table class="t"><tr><th>时节</th><th>窗口</th><th>主推方向</th><th>状态</th></tr><tbody id="d-season"></tbody></table>
     <p class="note">本 demo 的降幅用供给里各站最高价 vs 最低价的价差示意（供给暂无 30 天历史价）；划线价是否供给已有，待确认。</p>
@@ -497,10 +526,8 @@ renderFeed();
   const live = SC.filter(s => !s.proposed), leafIds = new Set(); live.forEach(s => s.leaves.forEach(l => leafIds.add(l.id)));
   const cspu = live.reduce((a, s) => a + s.leaves.reduce((b, l) => b + l.n, 0), 0);
   $('#f-kpitxt').innerHTML = `<b>${live.length} 个场景</b>（另 ${SC.length - live.length} 个建议新增）、<b>${leafIds.size} 个叶子类目</b>（去重）、<b>${fmt(cspu)} CSPU</b>（本期场景叶子合计，未去重）`;
-  $('#f-sup').innerHTML = SC.map(s => `<div class="r" ${s.proposed ? 'style="border-style:dashed;opacity:.8"' : ''}><div class="h"><span class="em">${EMO[s.k] || '•'}</span>${esc(s.en)} <span style="color:#999;font-weight:400">${esc(s.zh)}</span>${s.proposed ? '<span class="badge off">建议新增</span>' : ''}<span class="pool">${fmt(s.leaves.reduce((a, l) => a + l.n, 0))} CSPU</span></div>
-    <div class="c">${[...new Set(s.leaves.map(l => l.task))].join(' · ')}</div>
-    <details><summary>10 个叶子类目</summary><div class="rules">${s.leaves.map(l => `<div>${esc(l.en)} <span style="color:#999">${esc(l.zh)}</span> · ${esc(l.task)} · ${fmt(l.n)}</div>`).join('')}</div></details>
-    ${s.note ? `<div class="note warn">${esc(s.note)}</div>` : ''}</div>`).join('');
+  $('#f-scene-table').innerHTML = `<tr><th style="width:230px">场景</th><th>二级任务</th><th class="num">叶子</th><th class="num">CSPU</th><th style="width:120px">圈定方式</th></tr>` + SC.map((s, i) => `<tr class="sr" data-i="${i}" style="cursor:pointer"><td><span class="em">${EMO[s.k] || '•'}</span> <b>${esc(s.en)}</b> <span style="color:#999">${esc(s.zh)}</span>${s.proposed ? ' <span class="badge off">供给建议新增</span>' : ''}</td><td>${[...new Set(s.leaves.map(l => l.task))].join(' · ')}</td><td class="num">${s.leaves.length}</td><td class="num">${fmt(s.leaves.reduce((a, l) => a + l.n, 0))}</td><td>${s.k === 'gift_ideas' ? '类目 + 礼物词' : '只用类目'}</td></tr><tr class="sd" data-i="${i}" hidden><td colspan="5" style="background:var(--bg)"><div style="font-size:12px;line-height:1.6">${s.leaves.map(l => `<span style="display:inline-block;margin:2px 10px 2px 0">${esc(l.en)} <span style="color:#999">${esc(l.zh)}</span> · ${esc(l.task)} · ${fmt(l.n)}</span>`).join('')}</div>${s.note ? `<div class="note warn">供给备注：${esc(s.note)}</div>` : ''}</td></tr>`).join('');
+  $$('#f-scene-table tr.sr').forEach(r => r.onclick = () => { const d = $(`#f-scene-table tr.sd[data-i="${r.dataset.i}"]`); d.hidden = !d.hidden; });
 })();
 
 // ======================= ③ Top deals =======================
@@ -515,7 +542,6 @@ renderFeed();
     return `<div class="pc ${kind}"><span class="off">-${d}%</span>${kind === 'hit' ? '<span class="ribbon">Price tracker</span>' : kind === 'liked' ? '<span class="ribbon">Liked</span>' : ''}<span class="heart">${kind === 'liked' ? '♥' : '♡'}</span>
       <div class="ph"><img loading="lazy" src="${IMG(p.img)}" alt=""></div><div class="bd"><div class="nm" title="${esc(p.t)}">${esc(p.t)}</div><div class="why">✦ ${why}</div><div class="pr">${money(p.pmin)}<s>${money(p.pmax)}</s></div><div class="fr">— From ${esc(p.s[0])} · ${esc(p.leafEn)}</div></div></div>`; }).join('');
   $$('#d-demo .pc').forEach(el => el.onclick = () => toast('→ 商品详情侧栏（带 Ask Pickoo 入口）'));
-  $('#d-n').textContent = `demo 池 ${pool.length} 个`;
   $('#d-season').innerHTML = [['超级碗','2 月初','派对零食、饮料、电视',0],['阵亡将士纪念日 / 独立日','5 月底、7 月初','烧烤用具、户外、夏季促销',0],['Prime Day 等夏季大促','7 月','全品类好价，作为好价卡的放大器',0],['开学季','7 月底–8 月','文具、书包、宿舍用品、笔记本电脑',0],['万圣节','10 月','服装、糖果、装饰',0],['感恩节 / 黑五 / 网一','11 月','食材清单、全品类大促、礼物',1],['圣诞 / 新年','12 月','礼物、装饰、聚会清单',2]].map(r => `<tr ${r[3] === 1 ? 'class="hl"' : ''}><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3] === 1 ? '<span class="badge ok">当前主推</span>' : r[3] === 2 ? '<span class="badge">下一个</span>' : '<span class="badge off">未到</span>'}</td></tr>`).join('');
 })();
 </script>
