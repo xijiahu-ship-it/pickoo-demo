@@ -309,7 +309,7 @@ table.t tr.hl td{background:#fffbe6}
     <div class="pri" style="margin-top:14px">
       <div class="p"><div class="k"><span class="n">1</span>优先级：时令 &gt; 通用 &gt; 大类</div><div class="d">首页从左到右：<b>时令专题 + 通用品类 3 张 + 大类场景 2 张</b>。时令只出当前日期在周期内的，每个 1 张（今天：<span id="l-season-now"></span>）；按现有周期同时最多 2 个。</div></div>
       <div class="p"><div class="k"><span class="n">2</span>同类内部排序：省得多的在前，没看过的优先</div><div class="d">同一类 Topic 里，按<b>整单节省金额从大到小</b>排（原价合计 − 现价合计；原价 = 每个 CSPU 各站最高价之和，现价 = 各站最低价之和）。<b>每个一级分类最多出 1 张</b>，避免 3 张通用卡都是家居厨房。<b>之前没展示过的话题卡优先</b>：同一分类下 3 张卡轮换曝光，用户看过的往后排。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>有行为后：兴趣优先，时令补位</div><div class="d">用户有点击 / 对话行为后，<b>感兴趣的品类对应的清单优先推荐</b>，其余坑位用时令热门补齐。二期再根据全站热门（US 用户聊天 memory、点击/成交）和个人 memory 更新话题卡和排序。</div></div>
+      <div class="p"><div class="k"><span class="n">3</span>有行为后：个人相关性 + 节省金额 + 时令</div><div class="d">出现 chat 透露、喜欢 / 收藏 / 盯价、点清单卡或单品任一信号即切换。<b>score = 0.40 × 个人相关性 + 0.35 × 节省金额分 + 0.25 × 时令分</b>。个人相关性按 topic 算、取最高：chat 透露场景 / 品类 0.6 &gt; 喜欢 / 收藏 / 盯价所在类目 0.5 &gt; 点过的清单卡 0.4 &gt; 点过的单品所在类目 0.3；节省金额同类 topic 内四档；时令周期内 = 1。不再按 1 + 3 + 2 硬配额，按 score 取前 6 张，只保周期内时令至少 1 张、同一 topic 最多 1 张；看过没点的卡降权，同 topic 三张轮换；有孩子 / 宠物才出对应清单。</div></div>
     </div>
   </div>
 
