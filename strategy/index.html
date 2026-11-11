@@ -308,17 +308,18 @@ table.t tr.hl td{background:#fffbe6}
       <div class="hrow" id="l-demo"></div>
     </div>
     <div class="pri" style="margin-top:14px">
-      <div class="p"><div class="k"><span class="n">1</span>因子：整单降幅 + 热度 + 个人相关性（与单品同构）</div><div class="d"><ul>
-<li><b>整单降幅分</b>：（原价合计 − 现价合计）/ 原价合计，四档 0 / 0.3 / 0.6 / 0.9；清单内任一商品 7 天内新降 +0.1；整单降幅 = 0 的卡只进二级页</li>
-<li><b>热度分</b>：清单内商品热度分平均 × 0.6 + topic 在时令周期内（+0.2）+ topic 清单卡近 N 天点击率前 30%（+0.2）</li>
-<li><b>个人相关性</b>（按 topic，取最高）：chat 透露 0.6 &gt; 喜欢 / 收藏 / 盯价所在类目 0.5 &gt; 点过的清单卡 0.4 &gt; 点过的单品所在类目 0.3</li></ul></div></div>
-      <div class="p"><div class="k"><span class="n">2</span>冷启动：score = 0.55 × 整单降幅 + 0.45 × 热度</div><div class="d"><ul>
-<li>坑位沿用 PRD：周期内时令各 1 张（今天：<span id="l-season-now"></span>）+ 通用品类 3 张 + 大类场景 2 张，配额内按 score 排</li>
-<li>同一 topic 最多 1 张；没展示过的卡优先</li></ul></div></div>
-      <div class="p"><div class="k"><span class="n">3</span>非冷启动：score = 0.35 × 整单降幅 + 0.25 × 热度 + 0.40 × 个人相关性</div><div class="d"><ul>
+      <div class="p"><div class="k"><span class="n">1</span>冷启动：时令 &gt; 通用品类 &gt; 大类场景</div><div class="d"><ul>
+<li>首页从左到右：周期内时令各 1 张（今天：<span id="l-season-now"></span>）+ 通用品类 3 张 + 大类场景 2 张</li>
+<li>同类内按热度分排（热度分已含时令），同一 topic 最多 1 张</li>
+<li>没展示过的卡优先，同 topic 三张轮换</li></ul></div></div>
+      <div class="p"><div class="k"><span class="n">2</span>非冷启动：score = 0.35 × 整单降幅 + 0.25 × 热度 + 0.40 × 个人相关性</div><div class="d"><ul>
 <li><b>切换条件</b>：出现 chat 透露、喜欢 / 收藏 / 盯价、点清单卡或单品任一信号；只点场景 chip 不算</li>
 <li><b>坑位</b>：不再硬配额，按 score 取前 6 张；周期内时令至少 1 张，同一 topic 最多 1 张</li>
 <li><b>轮换</b>：看过没点的卡降权 × 0.5，同 topic 三张轮换</li></ul></div></div>
+      <div class="p"><div class="k"><span class="n">3</span>非冷启动考虑因子（与单品同构）</div><div class="d"><ul>
+<li><b>整单降幅分</b>：（原价合计 − 现价合计）/ 原价合计，四档 0 / 0.3 / 0.6 / 0.9；清单内任一商品 7 天内新降 +0.1；整单降幅 = 0 的卡只进二级页</li>
+<li><b>热度分</b>：清单内商品热度分平均 × 0.6 + topic 在时令周期内（+0.2）+ topic 清单卡近 N 天点击率前 30%（+0.2）</li>
+<li><b>个人相关性</b>（按 topic，取最高）：chat 透露 0.6 &gt; 喜欢 / 收藏 / 盯价所在类目 0.5 &gt; 点过的清单卡 0.4 &gt; 点过的单品所在类目 0.3</li></ul></div></div>
     </div>
   </div>
 
