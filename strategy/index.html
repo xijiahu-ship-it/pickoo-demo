@@ -237,7 +237,18 @@ table.t tr.hl td{background:#fffbe6}
 .sup .r summary{font-size:11.5px;color:var(--blue);cursor:pointer}
 .sup .r .rules{font-size:11.5px;color:#555;margin-top:4px;line-height:1.5}
 .sup .r .rules div{padding:2px 0;border-top:1px dashed var(--line)}
+.gt h3{font-size:14px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.gc{border:1px solid var(--line);border-radius:12px;padding:10px 12px 4px;margin-bottom:10px;background:#fff}
+.gc.inactive{opacity:.6}
+.gc .gh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;margin-bottom:8px}
+.gc .gh .win{font-size:11px;color:var(--amber)}.gc .gh .win.inactive{color:#aaa}
+.gc .gh .pool{margin-left:auto;font-weight:500;color:var(--blue);font-size:12px;white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit}
+.gc .gh .pool:hover{border-color:var(--blue)}
+.gc .rules{font-size:11.5px;color:#555;line-height:1.5;background:var(--bg);border-radius:8px;padding:6px 10px;margin-bottom:8px}
+.gc .rules div{padding:2px 0;border-top:1px dashed var(--line)}
+.gc [hidden]{display:none!important}
 .lcsm .lc{width:236px;height:300px}
+.lcsm .lc .ty{display:none}
 .lcsm .lc .tt{font-size:17px;top:70px}.lcsm .lc .cnt{top:122px}.lcsm .lc .pr{top:140px}.lcsm .lc .th div{height:60px}
 </style>
 </head>
@@ -257,38 +268,33 @@ table.t tr.hl td{background:#fffbe6}
 <!-- =============================== ① 清单推荐 =============================== -->
 <div class="view on" id="v-list">
   <div class="blk">
-    <h2><span class="n">1</span>Demo：首页上长这样 <span class="src-tag">点清单卡 → 进 Agent 对话</span></h2>
-    <p class="lead">首页一次展示 6 张清单卡：<b>1 张时令专题 + 3 张通用品类 + 2 张大类场景</b>。每张卡 = 主标题 + 3–6 个商品 + 整单现价/原价。点卡进入 Agent：带上标题、商品 list、单品价格/划线价、整单价格。</p>
+    <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Shop the Whole List · 点清单卡 → 进 Agent 对话</span></h2>
     <div class="canvas">
       <h3 class="mh">Shop the Whole List</h3>
       <div class="ms">A few things that work better together, priced as one order.</div>
       <div class="hrow" id="l-demo"></div>
     </div>
-  </div>
-
-  <div class="blk">
-    <h2><span class="n">2</span>推荐优先级：哪些卡、按什么顺序 <span class="src-tag">PRD 3.3 清单排序</span></h2>
-    <div class="pri">
+    <div class="pri" style="margin-top:14px">
       <div class="p"><div class="k"><span class="n">1</span>时令专题最前，只取 1 张</div><div class="d">必须<b>满足当前日期</b>的时令窗口才上。今天在窗口内：<span id="l-season-now"></span>。圣诞 11-27 起接档。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>通用品类 3 张，大类场景 2 张</div><div class="d">冷启动顺序 <b>时令 &gt; 通用 &gt; 大类</b>。同类里按<b>整单节省金额从大到小</b>（原价合计 − 现价合计），每个一级分类最多出 1 张，<b>没展示过的话题卡优先</b>。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>有行为后按兴趣</div><div class="d">用户点过的品类优先推荐，时令热门补位。二级页（View all）展示全部在线清单。</div></div>
+      <div class="p"><div class="k"><span class="n">2</span>通用品类 3 张，大类场景 2 张</div><div class="d">冷启动顺序 <b>时令 &gt; 通用 &gt; 大类</b>。同类里按<b>整单节省金额从大到小</b>（原价合计 − 现价合计），每个一级分类最多 1 张，<b>没展示过的话题卡优先</b>。</div></div>
+      <div class="p"><div class="k"><span class="n">3</span>有行为后按兴趣</div><div class="d">用户点过的品类优先推荐，时令热门补位。点卡进 Agent 时带上标题、商品 list、单品价格/划线价、整单价格；二级页展示全部清单。</div></div>
     </div>
     <b style="font-size:13px">今天的 6 张卡及理由</b>
     <div class="order" id="l-order"></div>
   </div>
 
   <div class="blk">
-    <h2><span class="n">3</span>分类、Topic 与供给 <span class="src-tag">供给规则 v4（11-09）· US 2026-11-01</span></h2>
-    <p class="lead">三类 Topic → 23 个一级分类 → <span id="l-cardn"></span> 张在线话题卡。<b>点一级分类</b>展开它的话题卡；<b>点 CSPU 数</b>展开这个分类背后的选品逻辑（叶子类目和圈品条件）。</p>
+    <h2><span class="n">2</span>全部清单：有哪些 list、背后供给有多少 <span class="src-tag">供给规则 v4（11-09）· US 2026-11-01</span></h2>
+    <p class="lead">三类 Topic → 23 个一级分类 → <span id="l-cardn"></span> 张在线话题卡，全部做成卡片。每个一级分类标了候选池 CSPU 数，<b>点 CSPU 数</b>展开这个分类的选品逻辑；点卡片看清单内容。★ = 今天在首页。</p>
     <div class="kpis" id="l-kpis"></div>
-    <div class="sup" id="l-sup"></div>
+    <div id="l-gallery"></div>
   </div>
 </div>
 
 <!-- =============================== ② 单品推荐 =============================== -->
 <div class="view" id="v-feed">
   <div class="blk">
-    <h2><span class="n">1</span>Demo：首页上长这样 <span class="src-tag">场景多选 · Discount 排序 · 点卡进商品详情</span></h2>
+    <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Deals for You · 场景多选 · Discount 排序 · 点卡进商品详情</span></h2>
     <p class="lead">Best Price 的承接：不用输入就能看好价。Filter 本期只有两个：<b>场景（可多选）</b>和 <b>Discount %</b>（替换原 Price / Sold，hover 有解释）。卡片 = 图 + 名称 + ✦ 推荐理由（可核对的省钱点 + 使用场景）+ 现价/划线价 + 来源站。</p>
     <div class="canvas">
       <h3 class="mh">Deals for You</h3>
@@ -297,11 +303,7 @@ table.t tr.hl td{background:#fffbe6}
       <div class="grid4" id="f-grid"></div>
       <button class="more" id="f-more">Load more</button>
     </div>
-  </div>
-
-  <div class="blk">
-    <h2><span class="n">2</span>推荐优先级 <span class="src-tag">PRD 3.4 排序 / 冷启动</span></h2>
-    <div class="pri">
+    <div class="pri" style="margin-top:14px">
       <div class="p"><div class="k"><span class="n">1</span>先圈候选：时节 + 热门 + 有折扣</div><div class="d">场景叶子类目圈定 ∩ <b>符合时节、热门品</b>（供给圈选）∩ <b>近 30 天有降价</b>。当前时节主推：感恩节 / 黑五 / 网一（食材清单、全品类大促、礼物）。</div></div>
       <div class="p"><div class="k"><span class="n">2</span>排序 = 相关性 × 降价幅度</div><div class="d">冷启动先问 3 个轻量问题（家庭人数、孩子/宠物、会员），相关性按场景叶子均等；有行为后按点击和 profile 加权。用户可切 Discount ↓ 按近 30 天降幅排。</div></div>
       <div class="p"><div class="k"><span class="n">3</span>按叶子类目打散</div><div class="d">每屏每个叶子 ≤ 4 个、同叶子不连续超过 2 个，避免一屏全是床单。喜欢 / 不喜欢 / 筛选后下一屏要有可感知变化。</div></div>
@@ -309,7 +311,7 @@ table.t tr.hl td{background:#fffbe6}
   </div>
 
   <div class="blk">
-    <h2><span class="n">3</span>场景分类与供给 <span class="src-tag">PRD 3.4 场景枚举 · 供给场景筛选</span></h2>
+    <h2><span class="n">2</span>场景分类与供给 <span class="src-tag">PRD 3.4 场景枚举 · 供给场景筛选</span></h2>
     <p class="lead"><span id="f-kpitxt"></span>。每个场景挂 10 个叶子类目，叶子对应二级任务。虚线 = 建议新增、待确认。</p>
     <div class="sup" id="f-sup"></div>
   </div>
@@ -318,18 +320,14 @@ table.t tr.hl td{background:#fffbe6}
 <!-- =============================== ③ Top deals =============================== -->
 <div class="view" id="v-deals">
   <div class="blk">
-    <h2><span class="n">1</span>Demo：首页上长这样 <span class="src-tag">横滑 · 点卡进商品详情（带 Ask Pickoo）</span></h2>
+    <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Top deals of the day · 横滑 · 点卡进商品详情（带 Ask Pickoo）</span></h2>
     <p class="lead">绿色卡 = 盯价命中，标签 <b>Hit your target price!</b>；红边 ♥ 卡 = 用户喜欢过的商品降价；其余 = 运营高质量低价池，标签 at a 30-day low / 30 days Lowest!。折扣 =（划线价 − 现价）/ 划线价。</p>
     <div class="canvas">
       <h3 class="mh">Top deals of the day</h3>
       <div class="ms">Checked today across the stores you shop.</div>
       <div class="hrow" id="d-demo"></div>
     </div>
-  </div>
-
-  <div class="blk">
-    <h2><span class="n">2</span>推荐优先级：坑位顺序 <span class="src-tag">PRD 3.2 · 11/10 研发结论</span></h2>
-    <div class="pri">
+    <div class="pri" style="margin-top:14px">
       <div class="p"><div class="k"><span class="n">1</span>盯价命中，放第 1 坑</div><div class="d">用户设过 price drop 且已达成的商品。<b>连续展示 3 次不点击</b>就收进 Auto-task 二级页，同时走 email + agent 内提示。</div></div>
       <div class="p"><div class="k"><span class="n">2</span>喜欢过的商品降价</div><div class="d">用户 ♡ 过的商品出现降价，用带 ♥ 的样式单独标出。</div></div>
       <div class="p"><div class="k"><span class="n">3</span>运营好价池，按降幅倒排</div><div class="d">热门/时节 ∩ 高质量 ∩ 近 30 天降幅 &gt; 5%，按降幅从大到小；非冷启动再叠加用户点击和 profile 相关性。<b>Daily 更新</b>。横滑上限由前端定。</div></div>
@@ -337,7 +335,7 @@ table.t tr.hl td{background:#fffbe6}
   </div>
 
   <div class="blk">
-    <h2><span class="n">3</span>供给：池子怎么来 <span class="src-tag">PRD 3.2 price drop 供给筛选维度</span></h2>
+    <h2><span class="n">2</span>供给：池子怎么来 <span class="src-tag">PRD 3.2 price drop 供给筛选维度</span></h2>
     <div class="flow">
       <div class="box"><div class="h">① 热门 / 时节</div><div class="d">热门 = 供给爬的 Amazon 榜单 + N 天内 review 涨幅高；时节 = 当季主推方向</div></div><div class="arr">∩</div>
       <div class="box"><div class="h">② 高质量</div><div class="d">review 数 / view 数达到阈值（阈值和供给确定）</div></div><div class="arr">∩</div>
@@ -382,11 +380,11 @@ function pickLists(){
   for (const tp of Object.keys(groups)) { groups[tp].sort((a, b) => b.save - a.save); const used = new Set(); groups[tp].forEach(x => { if (out.filter(o => o.t.type === tp).length < quota[tp] && !used.has(x.t.k)) { x.pick = true; used.add(x.t.k); out.push(x); } }); }
   return {groups, out};
 }
-function listCard(x){
+function listCard(x, star){
   const {t, c} = x; const tt = cardTotals(c);
   return `<div class="lc" data-t="${TP.indexOf(t)}" data-c="${t.cards.indexOf(c)}"><div class="bg" style="background-image:url(${IMG(c.items[0].img)})"></div><div class="ov"></div>
     <span class="sc">✦ ${esc(c.scene)}</span><span class="ty ${TYPE_CLS[t.type]}">${t.type === '时令专题' ? '时令 · ' + esc(t.zh) : esc(t.zh)}</span>
-    <div class="tt">${esc(c.t)}</div><div class="cnt">${c.items.length} useful things</div>
+    <div class="tt">${star ? '★ ' : ''}${esc(c.t)}</div><div class="cnt">${c.items.length} useful things</div>
     <div class="pr">${money(tt.now)}${tt.orig > tt.now ? `<s>${money(tt.orig)}</s>` : '<s style="visibility:hidden">-</s>'}</div>
     <div class="th">${c.items.slice(0, 3).map(p => `<div><img loading="lazy" src="${IMG(p.img)}" alt=""></div>`).join('')}</div></div>`;
 }
@@ -404,7 +402,7 @@ const closeDrawer = () => { $('#drawer').classList.remove('on'); $('#ovl').class
 $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
 (function renderList(){
   const {groups, out} = pickLists();
-  $('#l-demo').innerHTML = out.map(listCard).join('');
+  $('#l-demo').innerHTML = out.map(x => listCard(x)).join('');
   $$('#l-demo .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
   $('#l-season-now').innerHTML = TP.filter(t => t.type === '时令专题' && inWindow(t)).map(t => `<b>${esc(t.zh)}</b>（${t.start} ~ ${t.end}）`).join('、');
   const why = x => x.t.type === '时令专题' ? '在窗口内的时令里节省最多' : `${x.t.type}里节省最多的${x.t.zh}卡`;
@@ -414,13 +412,13 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
   const byType = {}; TP.forEach(t => (byType[t.type] = byType[t.type] || []).push(t));
   $('#l-kpis').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="kpi"><div class="v">${byType[tp].length}<span style="font-size:12px;color:#999;font-weight:400"> 个分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张卡</span></div><div class="l"><span class="badge ${TYPE_CLS[tp]}">${tp}</span> ${fmt(byType[tp].reduce((s, t) => s + t.pool, 0))} CSPU</div></div>`).join('') + `<div class="kpi"><div class="v">${fmt(TP.reduce((s, t) => s + t.pool, 0))}</div><div class="l">候选池 CSPU 合计（未跨话题去重）</div></div><div class="kpi"><div class="v">${TP.reduce((s, t) => s + t.rules.length, 0)}</div><div class="l">圈品规则条数</div></div>`;
   const picked = new Set(out.map(x => x.c.t));
-  $('#l-sup').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="g"><h3><span class="badge ${TYPE_CLS[tp]}">${tp}</span><span style="color:var(--mute);font-weight:400">${tp === '时令专题' ? '只在窗口内上线' : '全年常驻'} · ${byType[tp].length} 个一级分类</span></h3>` +
-    byType[tp].map(t => { const act = inWindow(t); const leaves = [...new Set(t.rules.map(r => r.zh))]; const star = t.cards.some(c => picked.has(c.t));
-      return `<div class="r" data-k="${t.k}"><div class="h"><span class="badge" style="font-size:10px;letter-spacing:.05em">${esc(t.chip)}</span>${esc(t.zh)}${star ? ' <span class="badge ok" style="padding:0 6px">今日在首页</span>' : ''}<button class="pool" title="点击看选品逻辑">${fmt(t.pool)} CSPU ▾</button></div>
-        ${t.start ? `<div class="win ${act ? '' : 'inactive'}">${act ? '● 当前在线' : '○ 未到窗口'} ${t.start} ~ ${t.end}</div>` : ''}
-        <div class="c" hidden>${t.cards.map(c => `<span class="${c.on ? (picked.has(c.t) ? 'pk' : '') : 'off'}">· ${esc(c.t)} <span style="color:#999;font-weight:400">${esc(c.zh)}</span>${c.on ? '' : '（已下线）'}${picked.has(c.t) ? ' ★' : ''}</span>`).join('<br>')}</div>
-        <div class="rules" hidden><div style="border:0;padding-top:4px"><b>选品逻辑</b>：按主题和场景召回，每卡 3–6 个 CSPU；候选池 = ${leaves.length} 个叶子类目 × ${t.rules.length} 条规则，去重后 ${fmt(t.pool)} 个 CSPU。原价 = 各站最高价求和，现价 = 各站最低价求和。</div>${t.rules.map(r => `<div>#${r.no} ${esc(r.zh)} <span style="color:#999">${esc(r.en)}</span> · ${esc(r.how)} · ${fmt(r.pool)}<br><span style="color:#888">${esc(r.text)}</span></div>`).join('')}</div></div>`; }).join('') + '</div>').join('');
-  $$('#l-sup .r').forEach(r => { r.querySelector('.h').onclick = e => { if (e.target.closest('.pool')) return; r.querySelector('.c').hidden = !r.querySelector('.c').hidden; }; r.querySelector('.pool').onclick = () => { const x = r.querySelector('.rules'); x.hidden = !x.hidden; r.querySelector('.c').hidden = false; }; });
+  $('#l-gallery').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="gt"><h3><span class="badge ${TYPE_CLS[tp]}">${tp}</span><span style="color:var(--mute);font-weight:400">${tp === '时令专题' ? '只在窗口内上线' : '全年常驻'} · ${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张卡</span></h3>` +
+    byType[tp].map(t => { const act = inWindow(t); const leaves = [...new Set(t.rules.map(r => r.zh))]; const off = t.cards.filter(c => !c.on).length;
+      return `<div class="gc ${t.start && !act ? 'inactive' : ''}" data-k="${t.k}"><div class="gh"><span class="badge" style="font-size:10px;letter-spacing:.05em">${esc(t.chip)}</span><b>${esc(t.zh)}</b>${t.start ? `<span class="win ${act ? '' : 'inactive'}">${act ? '● 当前在线' : '○ 未到窗口'} ${t.start} ~ ${t.end}</span>` : ''}<span style="color:#999;font-size:12px">${esc(t.prd)}${off ? ` · ${off} 张已下线` : ''}</span><button class="pool" title="点击看选品逻辑">候选池 ${fmt(t.pool)} CSPU ▾</button></div>
+        <div class="rules" hidden><div style="border:0;padding-top:4px"><b>选品逻辑</b>：按主题和场景召回，每卡 3–6 个 CSPU；候选池 = ${leaves.length} 个叶子类目 × ${t.rules.length} 条规则，去重后 ${fmt(t.pool)} 个 CSPU。原价 = 各站最高价求和，现价 = 各站最低价求和。</div>${t.rules.map(r => `<div>#${r.no} ${esc(r.zh)} <span style="color:#999">${esc(r.en)}</span> · ${esc(r.how)} · ${fmt(r.pool)}<br><span style="color:#888">${esc(r.text)}</span></div>`).join('')}</div>
+        <div class="hrow lcsm">${t.cards.filter(c => c.on).map(c => listCard({t, c}, picked.has(c.t))).join('')}</div></div>`; }).join('') + '</div>').join('');
+  $$('#l-gallery .pool').forEach(bt => bt.onclick = () => { const x = bt.closest('.gc').querySelector('.rules'); x.hidden = !x.hidden; });
+  $$('#l-gallery .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
 })();
 
 // ======================= ② 单品 =======================
