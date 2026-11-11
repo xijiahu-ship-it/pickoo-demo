@@ -325,6 +325,7 @@ table.t tr.hl td{background:#fffbe6}
   <div class="blk">
     <h2><span class="n">2</span>全部清单：有哪些 list、背后供给有多少 <span class="src-tag">供给 sheet「Okiee 圈品 · 1109 collection_config」· US 2026-11-01</span></h2>
     <div class="kpis" id="l-kpis"></div>
+    <p class="note" style="margin:0 0 10px">供给分级（sheet「Okiee 圈品」）：<span class="badge ok">强</span> 有权威机构的北美市场规模数据（NRF / APPA / Circana 等）能直接对应，或 ≥ 2 家 deals 竞品站（Target、DealNews、Slickdeals）设了独立频道；<span class="badge season">中</span> 两者只占一项，或数据只能间接支撑且仅 1 家竞品有频道；<span class="badge off">弱</span> 两者都缺，一期不上。</p>
     <div class="toc" id="l-toc"></div>
     <div id="l-gallery"></div>
   </div>
@@ -476,7 +477,7 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
     '通用品类': [['家电', '', '空调、暖风机、空气炸锅、吸尘器（PRD 与供给都没有）'], ['健康保健', '', '补剂、护具、眼镜'], ['珠宝配饰', '供给已圈 1,639,628 CSPU', '手表、项链、戒指、太阳镜'], ['球队 / 粉丝周边', '', '球衣、影视周边；GPC 无专门叶子，需标题词圈'], ['家装园艺', '', '工具、草坪、户外家具']],
     '大类场景': [['不加分类，先扩卡', '', '穿搭鞋包、数码电子各只 3 张卡，需求占四成，优先扩到 6 张以上；聚会招待下加「Backyard Cookout」承接夏季烧烤 / 国庆聚会']]
   };
-  $('#l-toc').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="tc"><h4><span class="badge ${TYPE_CLS[tp]}">${tp}</span>${byType[tp].length} 个一级分类 <span style="color:#aaa">· 待新增 ${tp === '大类场景' ? 0 : PROPOSED[tp].length}</span></h4>` + byType[tp].map(t => { const act = inWindow(t); return `<div class="ti ${t.start && !act ? 'inactive' : ''} ${t.tier === '弱' ? 'prop' : ''}"><a href="#g-${t.k}"><b>${esc(t.zh)}</b></a> <span class="cs">${fmt(t.pool)} CSPU</span>${t.tier === '弱' ? '<span class="badge off">一期不上</span>' : ''}${t.start ? `<span class="w">时令周期 ${t.start.slice(5)} ~ ${t.end.slice(5)}${act ? '（进行中）' : ''}</span>` : ''}<div class="cl">${t.cards.filter(c => c.on).map(c => (picked.has(c.t) ? '★ ' : '') + esc(c.t)).join('　/　')}</div></div>`; }).join('') +
+  $('#l-toc').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="tc"><h4><span class="badge ${TYPE_CLS[tp]}">${tp}</span>${byType[tp].length} 个一级分类 <span style="color:#aaa">· 待新增 ${tp === '大类场景' ? 0 : PROPOSED[tp].length}</span></h4>` + byType[tp].map(t => { const act = inWindow(t); return `<div class="ti ${t.start && !act ? 'inactive' : ''} ${t.tier === '弱' ? 'prop' : ''}"><a href="#g-${t.k}"><b>${esc(t.zh)}</b></a> ${tierB(t)} <span class="cs">${fmt(t.pool)} CSPU</span>${t.tier === '弱' ? '<span class="badge off">一期不上</span>' : ''}${t.start ? `<span class="w">时令周期 ${t.start.slice(5)} ~ ${t.end.slice(5)}${act ? '（进行中）' : ''}</span>` : ''}<div class="cl">${t.cards.filter(c => c.on).map(c => (picked.has(c.t) ? '★ ' : '') + esc(c.t)).join('　/　')}</div></div>`; }).join('') +
     PROPOSED[tp].map(([zh, w, cards]) => `<div class="ti prop"><b>${esc(zh)}</b> <span class="badge off">待新增</span>${w ? `<span class="w">${esc(w)}</span>` : ''}<div class="cl">${esc(cards)}</div></div>`).join('') + '</div>').join('');
   let gType = '时令专题', gCat = null;
   function renderGallery(){
