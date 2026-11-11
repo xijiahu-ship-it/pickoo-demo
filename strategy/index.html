@@ -286,12 +286,10 @@ table.t tr.hl td{background:#fffbe6}
       <div class="hrow" id="l-demo"></div>
     </div>
     <div class="pri" style="margin-top:14px">
-      <div class="p"><div class="k"><span class="n">1</span>时令专题最前，只取 1 张</div><div class="d">必须<b>满足当前日期</b>的时令窗口才上。今天在窗口内：<span id="l-season-now"></span>。圣诞 11-27 起接档。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>通用品类 3 张，大类场景 2 张</div><div class="d">冷启动顺序 <b>时令 &gt; 通用 &gt; 大类</b>。同类里按<b>整单节省金额从大到小</b>（原价合计 − 现价合计），每个一级分类最多 1 张，<b>没展示过的话题卡优先</b>。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>有行为后按兴趣</div><div class="d">用户点过的品类优先推荐，时令热门补位。点卡进 Agent 时带上标题、商品 list、单品价格/划线价、整单价格；二级页展示全部清单。</div></div>
+      <div class="p"><div class="k"><span class="n">1</span>优先级：时令 &gt; 通用 &gt; 大类</div><div class="d">首页固定 6 张：<b>时令专题 1 张 + 通用品类 3 张 + 大类场景 2 张</b>，按这个顺序从左到右排。时令专题<b>必须在当前日期的上线窗口内</b>才参与（今天在窗口内：<span id="l-season-now"></span>）；窗口外的时令卡不出，坑位由通用品类补。</div></div>
+      <div class="p"><div class="k"><span class="n">2</span>同类内部排序：省得多的在前，没看过的优先</div><div class="d">同一类 Topic 里，按<b>整单节省金额从大到小</b>排（原价合计 − 现价合计；原价 = 每个 CSPU 各站最高价之和，现价 = 各站最低价之和）。<b>每个一级分类最多出 1 张</b>，避免 3 张通用卡都是家居厨房。<b>之前没展示过的话题卡优先</b>：同一分类下 3 张卡轮换曝光，用户看过的往后排。</div></div>
+      <div class="p"><div class="k"><span class="n">3</span>有行为后：兴趣优先，时令补位</div><div class="d">用户有点击 / 对话行为后，<b>感兴趣的品类对应的清单优先推荐</b>，其余坑位用时令热门补齐。二期再根据全站热门（US 用户聊天 memory、点击/成交）和个人 memory 更新话题卡和排序。</div></div>
     </div>
-    <b style="font-size:13px">今天的 6 张卡及理由</b>
-    <div class="order" id="l-order"></div>
   </div>
 
   <div class="blk">
@@ -417,8 +415,6 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
   $('#l-demo').innerHTML = out.map(x => listCard(x)).join('');
   $$('#l-demo .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
   $('#l-season-now').innerHTML = TP.filter(t => t.type === '时令专题' && inWindow(t)).map(t => `<b>${esc(t.zh)}</b>（${t.start} ~ ${t.end}）`).join('、');
-  const why = x => x.t.type === '时令专题' ? '在窗口内的时令里节省最多' : `${x.t.type}里节省最多的${x.t.zh}卡`;
-  $('#l-order').innerHTML = out.map((x, i) => `<div class="o"><div class="h"><span class="pos">${i + 1}</span><span class="badge ${TYPE_CLS[x.t.type]}" style="padding:0 6px">${x.t.type.slice(0, 2)}</span>${esc(x.c.t)}</div><div class="s">${esc(x.t.zh)} · ${x.c.items.length} 个 CSPU · <em>省 ${money(x.save)}</em><br>${why(x)}</div></div>`).join('<span class="arrow">›</span>');
   const nOn = TP.reduce((s, t) => s + t.cards.filter(c => c.on).length, 0);
   $('#l-cardn').textContent = nOn;
   const byType = {}; TP.forEach(t => (byType[t.type] = byType[t.type] || []).push(t));
