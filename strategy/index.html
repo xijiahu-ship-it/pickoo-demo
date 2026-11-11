@@ -248,6 +248,19 @@ table.t tr.hl td{background:#fffbe6}
 .toc .ti.inactive .w{color:#999}
 .toc .ti .cl{color:#555;font-size:11.5px;margin-top:2px;line-height:1.5}
 .gc{scroll-margin-top:70px}
+#l-gallery{scroll-margin-top:70px}
+.lc .tt small{display:block;font-size:12px;font-weight:400;opacity:.9;margin-top:3px}
+.lc .cnt{top:160px}.lc .pr{top:180px}
+.lcsm .lc{height:324px}.lcsm .lc .tt{top:56px}.lcsm .lc .cnt{top:152px}.lcsm .lc .pr{top:170px}
+.gtabs{display:flex;gap:8px;margin:14px 0 10px}
+.gtabs button{font:inherit;font-size:13px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--mute)}
+.gtabs button.on{border-color:var(--ink);color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.gchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.gchips .chip small{color:#999;font-size:11px;margin-left:2px}.gchips .chip.on small{color:inherit;opacity:.8}
+.gchips .chip i{font-style:normal;color:var(--amber);font-size:9px;margin-left:2px}
+.gcard{flex:none;width:236px;scroll-snap-align:start}
+.gcard .cap{font-size:12px;margin:8px 2px 6px;line-height:1.5;color:#555}
+.gcard .cap b{display:block;color:var(--ink)}
 .gt h3{font-size:14px;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
 .gc{border:1px solid var(--line);border-radius:12px;padding:10px 12px 4px;margin-bottom:10px;background:#fff}
 
@@ -394,7 +407,7 @@ function listCard(x, star){
   const {t, c} = x; const tt = cardTotals(c);
   return `<div class="lc" data-t="${TP.indexOf(t)}" data-c="${t.cards.indexOf(c)}"><div class="bg" style="background-image:url(${IMG(c.items[0].img)})"></div><div class="ov"></div>
     <span class="sc">✦ ${esc(c.scene)}</span><span class="ty ${TYPE_CLS[t.type]}">${t.type === '时令专题' ? '时令 · ' + esc(t.zh) : esc(t.zh)}</span>
-    <div class="tt">${star ? '★ ' : ''}${esc(c.t)}</div><div class="cnt">${c.items.length} useful things</div>
+    <div class="tt">${star ? '★ ' : ''}${esc(c.t)}<small>${esc(c.zh)}</small></div><div class="cnt">${c.items.length} useful things</div>
     <div class="pr">${money(tt.now)}${tt.orig > tt.now ? `<s>${money(tt.orig)}</s>` : '<s style="visibility:hidden">-</s>'}</div>
     <div class="th">${c.items.slice(0, 3).map(p => `<div><img loading="lazy" src="${IMG(p.img)}" alt=""></div>`).join('')}</div></div>`;
 }
@@ -421,13 +434,22 @@ $('#dx').onclick = closeDrawer; $('#ovl').onclick = closeDrawer;
   $('#l-kpis').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="kpi"><div class="v"><span class="badge ${TYPE_CLS[tp]}" style="font-size:14px;padding:3px 10px;vertical-align:2px">${tp}</span> ${fmt(byType[tp].reduce((s, t) => s + t.pool, 0))} CSPU</div><div class="l">${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张话题卡</div></div>`).join('') + `<div class="kpi"><div class="v">${fmt(TP.reduce((s, t) => s + t.pool, 0))}</div><div class="l">候选池 CSPU 合计（未跨话题去重）</div></div><div class="kpi"><div class="v">${TP.reduce((s, t) => s + t.rules.length, 0)}</div><div class="l">圈品规则条数</div></div>`;
   const picked = new Set(out.map(x => x.c.t));
   $('#l-toc').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="tc"><h4><span class="badge ${TYPE_CLS[tp]}">${tp}</span>${byType[tp].length} 个一级分类</h4>` + byType[tp].map(t => { const act = inWindow(t); return `<div class="ti ${t.start && !act ? 'inactive' : ''}"><a href="#g-${t.k}"><b>${esc(t.zh)}</b></a> <span class="cs">${fmt(t.pool)} CSPU</span>${t.start ? `<span class="w">时令周期 ${t.start.slice(5)} ~ ${t.end.slice(5)}${act ? '（进行中）' : ''}</span>` : ''}<div class="cl">${t.cards.filter(c => c.on).map(c => (picked.has(c.t) ? '★ ' : '') + esc(c.t)).join('　/　')}</div></div>`; }).join('') + '</div>').join('');
-  $('#l-gallery').innerHTML = ['时令专题', '通用品类', '大类场景'].map(tp => `<div class="gt"><h3><span class="badge ${TYPE_CLS[tp]}">${tp}</span><span style="color:var(--mute);font-weight:400">${tp === '时令专题' ? '只在时令周期内展示' : '全年常驻'} · ${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, t) => s + t.cards.filter(c => c.on).length, 0)} 张卡</span></h3>` +
-    byType[tp].map(t => { const act = inWindow(t); const leaves = [...new Set(t.rules.map(r => r.zh))]; const off = t.cards.filter(c => !c.on).length;
-      return `<div class="gc ${t.start && !act ? 'inactive' : ''}" data-k="${t.k}" id="g-${t.k}"><div class="gh"><span class="badge" style="font-size:10px;letter-spacing:.05em">${esc(t.chip)}</span><b>${esc(t.zh)}</b>${t.start ? `<span class="win ${act ? '' : 'inactive'}">时令周期 ${t.start} ~ ${t.end}${act ? '（进行中）' : ''}</span>` : ''}<span style="color:#999;font-size:12px">${esc(t.prd)}${off ? ` · ${off} 张已下线` : ''}</span><button class="pool" title="点击看选品逻辑">候选池 ${fmt(t.pool)} CSPU ▾</button></div>
+  let gType = '时令专题', gCat = null;
+  function renderGallery(){
+    const cats = byType[gType]; if (!gCat || !cats.some(t => t.k === gCat)) gCat = (cats.find(t => inWindow(t)) || cats[0]).k;
+    const t = cats.find(x => x.k === gCat); const act = inWindow(t); const leaves = [...new Set(t.rules.map(r => r.zh))]; const off = t.cards.filter(c => !c.on).length;
+    $('#l-gallery').innerHTML = `<div class="gtabs">${['时令专题', '通用品类', '大类场景'].map(tp => `<button class="${tp === gType ? 'on' : ''}" data-tp="${tp}"><span class="badge ${TYPE_CLS[tp]}">${tp}</span>${byType[tp].length} 个一级分类 · ${byType[tp].reduce((s, x) => s + x.cards.filter(c => c.on).length, 0)} 张卡</button>`).join('')}</div>
+      <div class="gchips">${cats.map(x => `<span class="chip ${x.k === gCat ? 'on' : ''}" data-k="${x.k}">${esc(x.zh)}<small>${fmt(x.pool)}</small>${x.start && inWindow(x) ? '<i title="时令周期进行中">●</i>' : ''}</span>`).join('')}</div>
+      <div class="gc" id="g-${t.k}"><div class="gh"><span class="badge" style="font-size:10px;letter-spacing:.05em">${esc(t.chip)}</span><b>${esc(t.zh)}</b>${t.start ? `<span class="win ${act ? '' : 'inactive'}">时令周期 ${t.start} ~ ${t.end}${act ? '（进行中）' : ''}</span>` : ''}<span style="color:#999;font-size:12px">${esc(t.prd)}${off ? ` · ${off} 张已下线` : ''}</span><button class="pool" title="点击看选品逻辑">候选池 ${fmt(t.pool)} CSPU ▾</button></div>
         <div class="rules" hidden><div style="border:0;padding-top:4px"><b>选品逻辑</b>：按主题和场景召回，每卡 3–6 个 CSPU；候选池 = ${leaves.length} 个叶子类目 × ${t.rules.length} 条规则，去重后 ${fmt(t.pool)} 个 CSPU。原价 = 各站最高价求和，现价 = 各站最低价求和。</div>${t.rules.map(r => `<div>#${r.no} ${esc(r.zh)} <span style="color:#999">${esc(r.en)}</span> · ${esc(r.how)} · ${fmt(r.pool)}<br><span style="color:#888">${esc(r.text)}</span></div>`).join('')}</div>
-        <div class="hrow lcsm">${t.cards.filter(c => c.on).map(c => listCard({t, c}, picked.has(c.t))).join('')}</div></div>`; }).join('') + '</div>').join('');
-  $$('#l-gallery .pool').forEach(bt => bt.onclick = () => { const x = bt.closest('.gc').querySelector('.rules'); x.hidden = !x.hidden; });
-  $$('#l-gallery .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
+        <div class="hrow lcsm">${t.cards.filter(c => c.on).map(c => `<div class="gcard">${listCard({t, c}, picked.has(c.t))}<div class="cap"><b>${esc(c.zh)}</b><span>${esc(c.sub)}</span></div></div>`).join('')}</div></div>`;
+    $$('#l-gallery .gtabs button').forEach(bt => bt.onclick = () => { gType = bt.dataset.tp; gCat = null; renderGallery(); });
+    $$('#l-gallery .gchips .chip').forEach(c => c.onclick = () => { gCat = c.dataset.k; renderGallery(); });
+    $('#l-gallery .pool').onclick = () => { const x = $('#l-gallery .rules'); x.hidden = !x.hidden; };
+    $$('#l-gallery .lc').forEach(el => el.onclick = () => openChat(TP[+el.dataset.t], TP[+el.dataset.t].cards[+el.dataset.c]));
+  }
+  renderGallery();
+  $$('#l-toc .ti a').forEach(a => a.onclick = e => { e.preventDefault(); const k = a.getAttribute('href').slice(3); const t = TP.find(x => x.k === k); gType = t.type; gCat = k; renderGallery(); $('#l-gallery').scrollIntoView({behavior: 'smooth', block: 'start'}); });
 })();
 
 // ======================= ② 单品 =======================
