@@ -213,6 +213,7 @@ table.t tr.hl td{background:#fffbe6}
 .pri .p .k .n{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;text-align:center;line-height:22px}
 .pri .p .d{font-size:12.5px;color:#444;line-height:1.55}
 .pri .p .d b{color:var(--ink)}
+.pri .p .d ul{margin:0;padding-left:16px}.pri .p .d li{margin:3px 0}
 .order{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
 .order .o{border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:12.5px;background:#fff;min-width:190px}
 .order .o .h{display:flex;align-items:center;gap:6px;font-weight:600}
@@ -307,9 +308,20 @@ table.t tr.hl td{background:#fffbe6}
       <div class="hrow" id="l-demo"></div>
     </div>
     <div class="pri" style="margin-top:14px">
-      <div class="p"><div class="k"><span class="n">1</span>优先级：时令 &gt; 通用 &gt; 大类</div><div class="d">首页从左到右：<b>时令专题 + 通用品类 3 张 + 大类场景 2 张</b>。时令只出当前日期在周期内的，每个 1 张（今天：<span id="l-season-now"></span>）；按现有周期同时最多 2 个。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>同类内部排序：省得多的在前，没看过的优先</div><div class="d">同一类 Topic 里，按<b>整单节省金额从大到小</b>排（原价合计 − 现价合计；原价 = 每个 CSPU 各站最高价之和，现价 = 各站最低价之和）。<b>每个一级分类最多出 1 张</b>，避免 3 张通用卡都是家居厨房。<b>之前没展示过的话题卡优先</b>：同一分类下 3 张卡轮换曝光，用户看过的往后排。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>有行为后：个人相关性 + 节省金额 + 时令</div><div class="d">出现 chat 透露、喜欢 / 收藏 / 盯价、点清单卡或单品任一信号即切换。<b>score = 0.40 × 个人相关性 + 0.35 × 节省金额分 + 0.25 × 时令分</b>。个人相关性按 topic 算、取最高：chat 透露场景 / 品类 0.6 &gt; 喜欢 / 收藏 / 盯价所在类目 0.5 &gt; 点过的清单卡 0.4 &gt; 点过的单品所在类目 0.3；节省金额同类 topic 内四档；时令周期内 = 1。不再按 1 + 3 + 2 硬配额，按 score 取前 6 张，只保周期内时令至少 1 张、同一 topic 最多 1 张；看过没点的卡降权，同 topic 三张轮换；有孩子 / 宠物才出对应清单。</div></div>
+      <div class="p"><div class="k"><span class="n">1</span>优先级：时令 &gt; 通用 &gt; 大类</div><div class="d"><ul>
+<li>首页从左到右：<b>时令专题 + 通用品类 3 张 + 大类场景 2 张</b></li>
+<li>时令只出当前日期在周期内的，每个 1 张（今天：<span id="l-season-now"></span>）；按现有周期同时最多 2 个</li></ul></div></div>
+      <div class="p"><div class="k"><span class="n">2</span>同类内部排序：省得多的在前，没看过的优先</div><div class="d"><ul>
+<li><b>节省金额</b>从大到小：原价 = 每个 CSPU 各站最高价之和，现价 = 各站最低价之和</li>
+<li><b>每个一级分类最多 1 张</b>，避免 3 张通用卡都是家居厨房</li>
+<li><b>没展示过的优先</b>：同一分类下 3 张卡轮换曝光，看过的往后排</li></ul></div></div>
+      <div class="p"><div class="k"><span class="n">3</span>有行为后：个人相关性 + 节省金额 + 时令</div><div class="d"><ul>
+<li><b>切换条件</b>：出现 chat 透露、喜欢 / 收藏 / 盯价、点清单卡或单品任一信号</li>
+<li><b>score</b> = 0.40 × 个人相关性 + 0.35 × 节省金额分 + 0.25 × 时令分</li>
+<li><b>个人相关性</b>（按 topic，取最高）：chat 透露场景 / 品类 0.6 &gt; 喜欢 / 收藏 / 盯价所在类目 0.5 &gt; 点过的清单卡 0.4 &gt; 点过的单品所在类目 0.3</li>
+<li><b>节省金额分</b>：同类 topic 内四档；<b>时令分</b>：周期内 = 1</li>
+<li><b>坑位</b>：不再 1 + 3 + 2 硬配额，按 score 取前 6 张；周期内时令至少 1 张，同一 topic 最多 1 张</li>
+<li><b>轮换与过滤</b>：看过没点的卡降权，同 topic 三张轮换；有孩子 / 宠物才出对应清单</li></ul></div></div>
     </div>
   </div>
 
@@ -327,9 +339,24 @@ table.t tr.hl td{background:#fffbe6}
     <h2><span class="n">1</span>Demo 与推荐优先级 <span class="src-tag">Deals for You · 场景多选 · Discount 排序 · 点卡进商品详情</span></h2>
     <p class="lead">Best Price 的承接：不用输入就能看好价。推荐以 CSPU 为粒度。Filter 本期只有两个：<b>场景（可多选）</b>和 <b>Discount %</b>（替换原 Price / Sold，hover 有解释）。卡片 = 图 + 名称 + ✦ 推荐理由（可核对的省钱点 + 使用场景）+ 现价/划线价 + 来源站。</p>
     <div class="pri" style="margin:0 0 14px">
-      <div class="p"><div class="k"><span class="n">1</span>准入池：质量底线 + 站点配额，不要求降价</div><div class="d">T-1 日更。<b>质量底线</b>：信息完整度 ≥ 4 / 6 项（标题、描述、规格、属性、卖点、图 ≥ 3）、评论 ≥ 5 条且评分 ≥ 4.0、类目黑名单剔除；<b>站点</b>：单一零售商 ≤ 20%。池子按 16 个场景的叶子类目切片，每场景 ≥ 5,000 才生效。降价和热门不做准入条件，放到排序里加分。</div></div>
-      <div class="p"><div class="k"><span class="n">2</span>排序：降幅 + 热度，非冷启动再加个人相关性</div><div class="d"><b>冷启动</b> score = 0.55 × 降幅 + 0.45 × 热度；<b>非冷启动</b> = 0.35 × 降幅 + 0.25 × 热度 + 0.40 × 个人相关性（系数为 v1 起始值）。<b>降幅</b>按 30 天降幅四档 0 / 0.3 / 0.6 / 0.9，7 天内新降 +0.1，超过上限或无历史价记 0；<b>热度</b> = 评论数叶子内四档（最高 0.6）+ 评论增量前 30%（+0.15）+ Amazon 榜单（+0.15）+ 当季时令类目（+0.1，仅 default）；<b>个人相关性</b>：chat 透露 0.6 &gt; 喜欢 / 收藏 / 盯价 0.5 &gt; 点商品 0.3 &gt; 推荐 query chip 0.1，上限 1。选场景 chip 只做过滤，不算信号；切 Discount ↓ 只按降幅。</div></div>
-      <div class="p"><div class="k"><span class="n">3</span>打散与轮换</div><div class="d">叶子类目每屏 ≤ 4、不连续超过 2；同一零售商每屏 ≤ 1/3；价格带低 / 中 / 高每屏各 ≥ 1/4；曝光未点击下次降权 × 0.5、连续 3 次移出当日池；同款多规格、多站按 CSPU 去重展示最低价站。</div></div>
+      <div class="p"><div class="k"><span class="n">1</span>准入池：质量底线 + 站点配额，不要求降价</div><div class="d"><ul>
+<li><b>质量底线</b>：信息完整度 ≥ 4 / 6 项（标题、描述、规格、属性、卖点、图 ≥ 3）；评论 ≥ 5 条且评分 ≥ 4.0；类目黑名单剔除</li>
+<li><b>站点配额</b>：单一零售商 ≤ 20%</li>
+<li><b>场景切片</b>：按 16 个场景的叶子类目切，每场景 ≥ 5,000 才生效</li>
+<li>T-1 日更；降价和热门不做准入条件，放到排序里加分</li></ul></div></div>
+      <div class="p"><div class="k"><span class="n">2</span>排序：降幅 + 热度，非冷启动再加个人相关性</div><div class="d"><ul>
+<li><b>冷启动</b> score = 0.55 × 降幅 + 0.45 × 热度</li>
+<li><b>非冷启动</b> score = 0.35 × 降幅 + 0.25 × 热度 + 0.40 × 个人相关性（系数为 v1 起始值）</li>
+<li><b>降幅分</b>：30 天降幅四档 0 / 0.3 / 0.6 / 0.9；7 天内新降 +0.1；超上限或无历史价记 0</li>
+<li><b>热度分</b>：评论数叶子内四档（最高 0.6）+ 评论增量前 30%（+0.15）+ Amazon 榜单（+0.15）+ 当季时令类目（+0.1，仅 default）</li>
+<li><b>个人相关性</b>：chat 透露 0.6 &gt; 喜欢 / 收藏 / 盯价 0.5 &gt; 点商品 0.3 &gt; 推荐 query chip 0.1，累加上限 1</li>
+<li>选场景 chip 只做过滤，不算信号；切 Discount ↓ 只按降幅</li></ul></div></div>
+      <div class="p"><div class="k"><span class="n">3</span>打散与轮换</div><div class="d"><ul>
+<li><b>叶子类目</b>：每屏 ≤ 4，不连续超过 2</li>
+<li><b>站点</b>：同一零售商每屏 ≤ 1/3</li>
+<li><b>价格带</b>：低 / 中 / 高每屏各 ≥ 1/4</li>
+<li><b>曝光轮换</b>：未点击下次降权 × 0.5，连续 3 次移出当日池</li>
+<li><b>去重</b>：同款多规格、多站按 CSPU 合并，展示最低价站</li></ul></div></div>
     </div>
 <div class="canvas">
       <h3 class="mh">Deals for You</h3>
