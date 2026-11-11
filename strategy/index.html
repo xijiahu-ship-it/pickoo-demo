@@ -401,9 +401,8 @@ table.t tr.hl td{background:#fffbe6}
     <h2><span class="n">2</span>供给：池子怎么来 <span class="src-tag">PRD 3.2 price drop 供给筛选维度</span></h2>
     <div class="flow">
       <div class="box"><div class="h">① 热门 / 时节</div><div class="d">热门 = 供给爬的 Amazon 榜单 + N 天内 review 涨幅高；时节 = 当季主推方向</div></div><div class="arr">∩</div>
-      <div class="box"><div class="h">② 高质量</div><div class="d">review 数 / view 数达到阈值（阈值和供给确定）</div></div><div class="arr">∩</div>
-      <div class="box"><div class="h">③ 近 30 天降价 &gt; 5%</div><div class="d">同款 CSPU 近 x 天降幅 + 非同款（叶子类目内）近 x 天降幅</div></div><div class="arr">→</div>
-      <div class="box"><div class="h">④ 每日池</div><div class="d">按降幅倒排，取前 N 张，N 由前端定；Daily 更新</div></div>
+      <div class="box"><div class="h">② 近 30 天降价 &gt; 5%</div><div class="d">同款 CSPU 近 x 天降幅 + 非同款（叶子类目内）近 x 天降幅</div></div><div class="arr">→</div>
+      <div class="box"><div class="h">③ 每日池</div><div class="d">按降幅倒排，取前 N 张，N 由前端定；Daily 更新</div></div>
     </div>
     <table class="t"><tr><th>时节</th><th>窗口</th><th>主推方向</th><th>状态</th></tr><tbody id="d-season"></tbody></table>
     <p class="note">本 demo 的降幅用供给里各站最高价 vs 最低价的价差示意（供给暂无 30 天历史价）；划线价是否供给已有，待确认。</p>
